@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssm.admin.mapper.AdminMapper">
+    <resultMap id="BaseResultMap" type="com.ssm.admin.bean.Admin">
+        <result column="admin_id" jdbcType="INTEGER" property="adminId"/>
+        <result column="admin_code" jdbcType="VARCHAR" property="adminCode"/>
+        <result column="password" jdbcType="VARCHAR" property="password"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="telephone" jdbcType="VARCHAR" property="telephone"/>
+        <result column="email" jdbcType="VARCHAR" property="email"/>
+        <result column="enrolldate" jdbcType="TIMESTAMP" property="enrolldate"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="com.ssm.admin.bean.Admin">
+        INSERT INTO admin_info (admin_id, admin_code, password,
+                                name, telephone, email,
+                                enrolldate)
+        VALUES (#{adminId,jdbcType=INTEGER}, #{adminCode,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR},
+                #{name,jdbcType=VARCHAR}, #{telephone,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR},
+                #{enrolldate,jdbcType=TIMESTAMP})
+    </insert>
+
+    <insert id="addAdminSelect" parameterType="com.ssm.admin.bean.Admin">
+        insert into admin_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="adminId != null">
+                admin_id,
+            </if>
+            <if test="adminCode != null">
+                admin_code,
+            </if>
+            <if test="password != null">
+                password,
+            </if>
+            <if test="name != null">
+                name,
+            </if>
+            <if test="telephone != null">
+                telephone,
+            </if>
+            <if test="email != null">
+                email,
+            </if>
+            <if test="enrolldate != null">
+                enrolldate,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="adminId != null">
+                #{adminId,jdbcType=INTEGER},
+            </if>
+            <if test="adminCode != null">
+                #{adminCode,jdbcType=VARCHAR},
+            </if>
+            <if test="password != null">
+                #{password,jdbcType=VARCHAR},
+            </if>
+            <if test="name != null">
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="telephone != null">
+                #{telephone,jdbcType=VARCHAR},
+            </if>
+            <if test="email != null">
+                #{email,jdbcType=VARCHAR},
+            </if>
+            <if test="enrolldate != null">
+                #{enrolldate,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+
+
+    <delete id="deleteAdmin">
+        DELETE FROM admin_info
+        WHERE admin_id = #{adminId}
+    </delete>
+
+
+    <update id="editAdminInfo">
+        UPDATE admin_info
+        <set>
+            <if test=" adminCode!=null and adminCode!='' ">
+                admin_code = #{adminCode},
+            </if>
+            <if test=" password!=null and password!='' ">
+                password = #{password},
+            </if>
+            <if test=" name!=null and name!='' ">
+                name = #{name},
+            </if>
+            <if test=" telephone!=null and telephone!='' ">
+                telephone = #{telephone},
+            </if>
+            <if test=" email!=null and email!='' ">
+                email = #{email},
+            </if>
+            <if test=" enrolldate!=null and enrolldate!='' ">
+                enrolldate = #{enrolldate},
+            </if>
+        </set>
+        WHERE admin_id = #{adminId}
+    </update>
+
+
+    <select id="findAdminsBySelected" resultMap="BaseResultMap">
+        SELECT *
+        FROM admin_info
+        <where>
+            <if test=" adminId!=null and adminId!='' ">
+                AND admin_id = #{adminId},
+            </if>
+            <if test=" adminCode!=null and adminCode!='' ">
+                AND admin_code = #{adminCode},
+            </if>
+            <if test=" password!=null and password!='' ">
+                AND password = #{password},
+            </if>
+        </where>
+    </select>
+
+    <select id="findAdminByAdminCode" resultMap="BaseResultMap">
+        SELECT *
+        FROM admin_info
+        WHERE admin_code = #{adminCode}
+    </select>
+</mapper>

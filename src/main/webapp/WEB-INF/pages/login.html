@@ -1,0 +1,88 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title></title>
+    <link type="text/css" rel="stylesheet" media="all" href="styles/global.css"/>
+    <link type="text/css" rel="stylesheet" media="all" href="styles/global_color.css"/>
+    <script src="../../js/jquery-3.2.1.js"></script>
+</head>
+<body class="index">
+<div class="login_box">
+    <table>
+        <tr>
+            <td class="login_info">账号：</td>
+            <td colspan="2"><input id="adminCode" name="" type="text" class="width150"/></td>
+            <td class="login_error_info"><span id="adminCodeError" class="required"></span></td>
+        </tr>
+        <tr>
+            <td class="login_info">密码：</td>
+            <td colspan="2"><input id="password" name="" type="password" class="width150"/></td>
+            <td><span id="passwordError" class="required"></span></td>
+        </tr>
+        <tr>
+            <td class="login_info">验证码：</td>
+            <td class="width70"><input id="lgcode" name="lgcode" type="text" class="width70"/></td>
+            <td><img src="/findVerifyCode" id="codeImg" alt="验证码" title="点击更换"/></td>
+            <td><span id="verifyCodeError" class="required"></span></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td class="login_button" colspan="2">
+                <a id="btn" href="#"><img src="images/login_btn.png"/></a>
+            </td>
+            <td><span id="loginError" class="required"></span></td>
+        </tr>
+    </table>
+</div>
+</body>
+<script>
+
+    window.onload = function init() {
+        document.getElementById("codeImg").onclick = function () {
+            document.getElementById("codeImg").setAttribute("src","/findVerifyCode?timeStamp=" + Math.random())
+        }
+    };
+
+    $("#btn").click(function () {
+        var admincode = $("#adminCode").val();
+        var password = $("#password").val();
+        var verifyCode = $("#lgcode").val();
+
+//        var adminerror = $("#adminerror");
+//        var passworderror = $("#passworderror");
+//        var verifyCodeError = $("#verifyCodeError");
+//        var loginerror = $("#loginerror");
+//        adminerror.empty();
+//        passworderror.empty();
+//        verifyCodeError.empty();
+//        loginerror.empty();
+//        if (admincode == "" || password == "") {
+//            if (admincode == "") {
+//                adminerror.text("用户名不能为空");
+//            }
+//            if (password == "") {
+//                passworderror.text("密码不能为空");
+//            }
+//        }
+
+        $.ajax({
+            url: "/login",
+            data: {"adminCode": admincode, "password": password, "verifyCode": verifyCode},
+            success: function (result) {
+                console.log(result);
+                if (result.code == "0") {
+                    window.location.href = '/index';
+                } else if (result.code == "-1"){
+                    var errorMsg = result.message;
+                    $("#adminCodeError").text(result.message.adminCodeError);
+                    $("#passwordError").text(result.message.passwordError);
+                    $("#verifyCodeError").text(result.message.verifyCodeError);
+                    $("#loginError").text(result.message.loginError);
+                }
+            }
+        })
+    })
+</script>
+</html>
