@@ -40,7 +40,9 @@
         <div class="input_info">
             <input id="rolename" type="text" class="width200"/>
             <span class="required">*</span>
-            <div id="roleNameError" class="validate_msg_medium"></div>
+            <div class="validate_msg_medium">
+                <span id="roleNameError"></span>
+            </div>
         </div>
         <div class="text_info clearfix"><span>设置权限：</span></div>
         <div class="input_info_high">
@@ -56,7 +58,9 @@
                 </ul>
             </div>
             <span class="required">*</span>
-            <div id="modulesError" class="validate_msg_tiny">至少</div>
+            <div class="validate_msg_tiny">
+                <span id="modulesError"></span>
+            </div>
         </div>
         <div class="button_info clearfix">
             <input type="button" value="保存" class="btn_save" onclick="addRoleAndModules();"/>
@@ -84,6 +88,8 @@
     //    });
 
     function addRoleAndModules() {
+        $("#roleNameError").empty();
+        $("#modulesError").empty();
         var roleName = $("#rolename").val();
         var obj = document.getElementsByName('module');
         var moduleStr = '';
@@ -96,10 +102,10 @@
 
         if (moduleStr.length == 0 || roleName.length == 0) {
             if (roleName.length == 0) {
-                $("#roleNameError").val("角色名不能为空");
+                $("#roleNameError").text("角色名不能为空");
             }
             if (moduleStr.length == 0) {
-                $("#modulesError").val("至少设置一个权限");
+                $("#modulesError").text("至少设置一个权限");
             }
         } else {
             $.ajax({
