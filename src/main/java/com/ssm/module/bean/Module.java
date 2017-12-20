@@ -1,8 +1,8 @@
 package com.ssm.module.bean;
 
 public class Module {
-    private Integer moduleId;
 
+    private Integer moduleId;
     private String name;
 
     public Integer getModuleId() {

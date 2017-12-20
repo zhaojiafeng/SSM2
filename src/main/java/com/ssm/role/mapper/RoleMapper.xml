@@ -12,7 +12,7 @@
         VALUES (#{roleId,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR})
     </insert>
 
-    <insert id="insertSelective" parameterType="com.ssm.role.bean.Role">
+    <insert id="addRole" parameterType="com.ssm.role.bean.Role">
         insert into role_info
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="roleId != null">
@@ -31,4 +31,47 @@
             </if>
         </trim>
     </insert>
+
+    <insert id="addRole_module">
+        INSERT INTO role_module (role_id, module_id)
+        VALUES (#{arg0}, #{arg1})
+    </insert>
+
+    <delete id="deleteRole">
+        DELETE FROM role_info
+        WHERE role_id = #{roleId,jdbcType=INTEGER}
+    </delete>
+
+    <delete id="deleteRole_module">
+        DELETE FROM role_module
+        WHERE role_id=#{arg0} AND module_id=#{arg1}
+    </delete>
+
+    <update id="editRoleInfo">
+        UPDATE role_info
+        <set>
+            <if test=" name!=null and name!='' ">
+                name = #{name},
+            </if>
+        </set>
+        WHERE role_id = #{roleId}
+    </update>
+
+    <select id="findAllRoles" resultMap="BaseResultMap">
+        SELECT *
+        FROM role_info
+    </select>
+
+    <select id="findRoleBySelected" resultMap="BaseResultMap">
+        SELECT * FROM role_info
+        <where>
+            <if test=" roleId!=null and roleId!='' ">
+                AND role_id = #{roleId}
+            </if>
+            <if test=" name!=null and name!='' ">
+                AND name = #{name}
+            </if>
+        </where>
+    </select>
+
 </mapper>
