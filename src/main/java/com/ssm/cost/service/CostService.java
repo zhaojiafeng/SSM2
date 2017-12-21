@@ -14,7 +14,7 @@ public interface CostService {
 
     AjaxResult editCost(Cost cost);
 
-    AjaxResult findAllCosts(String bcSort,String bdSort);
+    AjaxResult findAllCosts(Integer pageNum,Integer pageSize,String bcSort,String bdSort);
 
     AjaxResult findCostByCostId(int costId);
 

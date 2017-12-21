@@ -65,8 +65,8 @@ public class CostController {
 
     @ResponseBody
     @RequestMapping("/findAllCost")
-    public AjaxResult findAllCost(String bcSort,String bdSort) {
-        return costService.findAllCosts(bcSort,bdSort);
+    public AjaxResult findAllCost(Integer currentPage,Integer pageSize,String bcSort,String bdSort) {
+        return costService.findAllCosts(currentPage,pageSize,bcSort,bdSort);
     }
 
 

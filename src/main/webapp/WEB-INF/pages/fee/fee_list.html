@@ -48,6 +48,8 @@
             <img src="../images/close.png" onclick="this.parentNode.style.display='none';"/>
             删除成功！
         </div>
+        <input id="currPage" type="hidden" value=""/>
+        <input id="totalPage" type="hidden" value=""/>
         <!--数据区域：用表格展示数据-->
         <div id="data">
             <table id="datalist">
@@ -62,9 +64,7 @@
                     <th class="width50">状态</th>
                     <th class="width200"></th>
                 </tr>
-                <tbody id="t_boby">
-
-                </tbody>
+                <tbody id="boby"></tbody>
             </table>
             <p>业务说明：<br/>
                 1、创建资费时，状态为暂停，记载创建时间；<br/>
@@ -75,13 +75,6 @@
         </div>
         <!--分页-->
         <div id="pages">
-            <a href="#">上一页</a>
-            <a href="#" class="current_page">1</a>
-            <a href="#">2</a>
-            <a href="#">3</a>
-            <a href="#">4</a>
-            <a href="#">5</a>
-            <a href="#">下一页</a>
         </div>
     </form>
 </div>
@@ -96,23 +89,43 @@
     var BCSort = document.getElementById("baseCost").className;
     var BDSort = document.getElementById("baseDurat").className;
     console.log(BCSort, BDSort);
+    var currentPage = 1;
+    var pageSize = 5;
+    $("#boby").empty();
+    $("#pages").empty();
 
     $.ajax({
         url: "/findAllCost",
-        data: {"bcSort": BCSort, "bdSort": BDSort},
+        data: {"currentPage": currentPage, "pageSize": pageSize, "bcSort": BCSort, "bdSort": BDSort},
         success: function (result) {
             console.log(result);
-            for (var i = 0; i < result.data.length; i++) {
-                var cost = result.data[i];
-                showCost(cost);
+            if (result.code == "0") {
+                showCostResult(result);
             }
         }
     });
 
 
+    function findCostsByPage(currentPage) {
+        var BCSort = document.getElementById("baseCost").className;
+        var BDSort = document.getElementById("baseDurat").className;
+        var pageSize = 5;
+        console.log(currentPage, pageSize);
+        $("#boby").empty();
+        $("#pages").empty();
+
+        $.ajax({
+            url: "/findAllCost",
+            data: {"currentPage": currentPage, "pageSize": pageSize, "bcSort": BCSort, "bdSort": BDSort},
+            success: function (result) {
+                showCostResult(result);
+            }
+        });
+    }
+
+
     //排序按钮的点击事件
     function sort(btnObj) {
-
         if (btnObj.className == "sort_desc") {
             btnObj.className = "sort_asc";
         }
@@ -120,21 +133,21 @@
             btnObj.className = "sort_desc";
         }
 
-        $("#t_body").empty();
         var BCSort = document.getElementById("baseCost").className;
         var BDSort = document.getElementById("baseDurat").className;
-        console.log(BCSort, BDSort);
+        var currentPage = $("#currPage").val();
+        var pageSize = 5;
+
+        $("#boby").empty();
+        $("#pages").empty();
 
         $.ajax({
             url: "/findAllCost",
-            data: {"bcSort": BCSort, "bdSort": BDSort},
+            data: {"currentPage": currentPage, "pageSize": pageSize, "bcSort": BCSort, "bdSort": BDSort},
             success: function (result) {
                 console.log(result);
                 if (result.code == "0") {
-                    for (var i = 0; i < result.data.length; i++) {
-                        var cost = result.data[i];
-                        showCost(cost);
-                    }
+                    showCostResult(result);
                 }
             }
         });
@@ -148,8 +161,10 @@
                 url: "/alterStatusByCostId",
                 data: {"costId": costId},
                 success: function (result) {
-                    document.getElementById("operate_result_info").style.display = "block";
-                    window.location.href = '/fee_list';
+                    if (result.code=="0"){
+                        document.getElementById("operate_result_info").style.display = "block";
+                        window.location.href = '/fee_list';
+                    }
                 }
             });
         }
@@ -177,8 +192,41 @@
         }
     }
 
+    function showCostResult(result) {
+        $("#currPage").val(result.data.pageNum);
+        $("#totalPage").val(result.data.pages);
+        showCostPages();
+        for (var i = 0; i < result.data.list.length; i++) {
+            var cost = result.data.list[i];
+            showCostInfo(cost);
+        }
+    }
+
+    function showCostPages() {
+        var currentPage = $("#currPage").val();
+        var totalPage = $("#totalPage").val();
+        var spanF = $("<span></span>").append("第" + currentPage + "/" + totalPage + "页");
+        var spanL = $("<span></span>").append(
+            "<a href='#' onclick='findCostsByPage(1)'>首页</a>" +
+            "<a href='#' onclick='toLastCostPage()'>上一页</a>" +
+            "<a href='#' onclick='toNextCostPage()'>下一页</a>" +
+            "<a href='#' onclick='findCostsByPage(" + totalPage + ")'>尾页</a>"
+        );
+        $("#pages").append(spanF).append(spanL);
+    }
+
+    function toLastCostPage() {
+        var currentPage = parseInt($("#currPage").val()) - 1;
+        findCostsByPage(currentPage);
+    }
+
+    function toNextCostPage() {
+        var currentPage = parseInt($("#currPage").val()) + 1;
+        findCostsByPage(currentPage);
+    }
+
     //显示cost
-    function showCost(cost) {
+    function showCostInfo(cost) {
         var tdcostId = $("<td></td>").text(cost.costId);
         var tdname = $("<td></td>").append("<a href='/fee_detail?costId=" + cost.costId + "'>" + cost.name + "</a>");
         var tdbaseDur = $("<td></td>").text(cost.baseDuration);
@@ -207,7 +255,7 @@
             tdstatus = $("<td></td>").text("error");
         }
         var tr = $("<tr></tr>").append(tdcostId).append(tdname).append(tdbaseDur).append(tdbasecost).append(tdunitcost).append(tdcreattime).append(tdstarttime).append(tdstatus).append(tdoption);
-        $("#t_boby").append(tr);
+        $("#boby").append(tr);
     }
 
     function toAddCost() {
@@ -222,7 +270,7 @@
         var hour = normalTime.getHours();
         var minute = normalTime.getMinutes();
         var seconds = normalTime.getSeconds();
-        var revertime = [year,month,date].join('/')+' '+[hour,minute,seconds].join(':');
+        var revertime = [year, month, date].join('/') + ' ' + [hour, minute, seconds].join(':');
         return revertime;
     }
 </script>

@@ -130,6 +130,13 @@
     });
 
     function editFee() {
+        $("#costNameError").empty();
+        $("#costTypeError").empty();
+        $("#baseDurError").empty();
+        $("#baseCostError").empty();
+        $("#unitCostError").empty();
+        $("#descError").empty();
+
         var costId = $("#costId").val();
         var name = $("#costname").val();
         var costType = $('input:radio:checked').val();
@@ -138,22 +145,38 @@
         var unitCost = $("#unitcost").val();
         var descr = $("#desc").val();
 
-        $.ajax({
-            url: "/editCost",
-            data: {
-                "costId": costId, "name": name, "costType": costType, "baseDuration": baseDur,
-                "baseCost": baseCost, "unitCost": unitCost, "descr": descr
-            },
-            success: function (result) {
-                console.log(result);
-                if (result.code == "0") {
-                    showResultDiv(true);
-                    window.setTimeout("showResultDiv(false);", 3000);
-                    backToFee_list();
-                    window.setTimeout("backToFee_list();",3000);
+        if (name != '' && name.length < 50 && descr != '' && descr.length < 100 && costType != null){
+            $.ajax({
+                url: "/editCost",
+                data: {
+                    "costId": costId, "name": name, "costType": costType, "baseDuration": baseDur,
+                    "baseCost": baseCost, "unitCost": unitCost, "descr": descr
+                },
+                success: function (result) {
+                    console.log(result);
+                    if (result.code == "0") {
+                        showResultDiv(true);
+                        window.setTimeout("showResultDiv(false);", 3000);
+                        backToFee_list();
+                        window.setTimeout("backToFee_list();", 3000);
+                    } else if (result.code == "-1"){
+                        $("#baseDurError").text(result.message.baseDurError);
+                        $("#baseCostError").text(result.message.baseCostError);
+                        $("#unitCostError").text(result.message.unitCostError);
+                    }
                 }
+            })
+        }else{
+            if (name == '' || name.length > 50) {
+                $("#costNameError").text("50长度的字母、数字、汉字和下划线的组合");
             }
-        })
+            if (costType == null) {
+                $("#costTypeError").text("请选择资费类型");
+            }
+            if (descr == '' || descr.length > 100) {
+                $("#descError").text("100长度的字母、数字、汉字和下划线的组合");
+            }
+        }
     }
 
     //返回fee_list

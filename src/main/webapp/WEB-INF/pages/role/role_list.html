@@ -7,6 +7,7 @@
     <link type="text/css" rel="stylesheet" media="all" href="../styles/global.css"/>
     <link type="text/css" rel="stylesheet" media="all" href="../styles/global_color.css"/>
     <script src="../../../js/jquery-3.2.1.js"></script>
+    <script type="text/javascript" src="/fee_list"></script>
 </head>
 <body>
 <!--Logo区域开始-->
@@ -72,9 +73,9 @@
 <script language="javascript" type="text/javascript">
 
     var currentPage = 1;
-    var pageSize = 4;
+    var pageSize = 5;
     $.ajax({
-        url: "/findAllRoles?",
+        url: "/findAllRoles",
         data: {"currentPage": currentPage, "pageSize": pageSize},
         success: function (result) {
             showRoleResult(result);
@@ -82,7 +83,7 @@
     });
 
     function findRolesByPage(currentPage) {
-        var pageSize = 4;
+        var pageSize = 5;
         console.log(currentPage, pageSize);
         $("#t_body").empty();
         $("#pages").empty();
