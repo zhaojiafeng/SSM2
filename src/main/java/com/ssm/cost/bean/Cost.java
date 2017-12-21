@@ -3,24 +3,16 @@ package com.ssm.cost.bean;
 import java.util.Date;
 
 public class Cost {
+
     private Integer costId;
-
     private String name;
-
     private Integer baseDuration;
-
     private Integer baseCost;
-
     private Integer unitCost;
-
     private String status;
-
     private String descr;
-
     private Date creatime;
-
     private Date startime;
-
     private String costType;
 
     public Integer getCostId() {

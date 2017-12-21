@@ -15,6 +15,7 @@
         <result column="cost_type" jdbcType="CHAR" property="costType"/>
     </resultMap>
 
+
     <insert id="insert" parameterType="com.ssm.cost.bean.Cost">
         INSERT INTO cost (cost_id, name, base_duration,
                           base_cost, unit_cost, status,
@@ -26,7 +27,8 @@
                 #{costType,jdbcType=CHAR})
     </insert>
 
-    <insert id="insertSelective" parameterType="com.ssm.cost.bean.Cost">
+
+    <insert id="addCost" parameterType="com.ssm.cost.bean.Cost">
         insert into cost
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="costId != null">
@@ -93,6 +95,53 @@
             </if>
         </trim>
     </insert>
+
+
+    <delete id="deleteCost">
+        DELETE FROM cost
+        WHERE cost_id = #{costId}
+    </delete>
+
+
+    <update id="editCost">
+        UPDATE cost
+        SET name      = #{name}, base_duration = #{baseDuration}, base_cost = #{baseCost},
+            unit_cost = #{unitCost}, status = #{status}, creatime = #{creatime},
+            startime  = #{startime}, descr = #{descr}, cost_type = #{costType}
+        WHERE cost_id = #{costId}
+    </update>
+
+
+    <update id="alterStatusByCostId">
+        UPDATE cost
+        SET status = #{status}
+        WHERE cost_id = #{oldcostId}
+    </update>
+
+
+    <select id="findAllCosts" resultMap="BaseResultMap">
+        SELECT *
+        FROM cost
+        ORDER BY
+        <if test="bcsort=='sort_asc'">
+            base_cost ASC ,
+        </if>
+        <if test="bcsort=='sort_desc'">
+            base_cost DESC ,
+        </if>
+        <if test="bdsort=='sort_asc'">
+            base_duration ASC
+        </if>
+        <if test="bdsort=='sort_desc'">
+            base_duration DESC
+        </if>
+    </select>
+
+    <select id="findCostByCostId" resultMap="BaseResultMap">
+        SELECT *
+        FROM cost
+        WHERE cost_id = #{costId}
+    </select>
 
 
 </mapper>
