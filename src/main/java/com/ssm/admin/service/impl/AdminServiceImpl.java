@@ -20,6 +20,7 @@ public class AdminServiceImpl implements AdminService {
     @Resource
     private AdminMapper adminMapper;
 
+
     @Override
     public AjaxResult login(HttpSession session, Admin admin) {
         LoginError loginError = new LoginError();
@@ -60,4 +61,21 @@ public class AdminServiceImpl implements AdminService {
 
 
 
+
+
+
+
+
+
+
+
+    @Override
+    public AjaxResult editAdminInfo(HttpSession session, Admin admin) {
+        return null;
+    }
+
+    @Override
+    public AjaxResult alterAdminPassword(HttpSession session, Admin admin, String newPassword) {
+        return null;
+    }
 }

@@ -3,44 +3,26 @@ package com.ssm.account.bean;
 import java.util.Date;
 
 public class Account {
+
     private Integer accountId;
-
     private Integer recommenderId;
-
     private String loginName;
-
     private String loginPasswd;
-
     private String status;
-
     private Date createDate;
-
     private Date pauseDate;
-
     private Date closeDate;
-
     private String realName;
-
     private String idcardNo;
-
     private Date birthdate;
-
     private String gender;
-
     private String occupation;
-
     private String telephone;
-
     private String email;
-
     private String mailaddress;
-
     private String zipcode;
-
     private String qq;
-
     private Date lastLoginTime;
-
     private String lastLoginIp;
 
     public Integer getAccountId() {

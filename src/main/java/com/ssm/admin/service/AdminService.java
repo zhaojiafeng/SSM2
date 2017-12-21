@@ -15,4 +15,9 @@ public interface AdminService {
 
 
 
+
+
+    AjaxResult editAdminInfo(HttpSession session, Admin admin);
+
+    AjaxResult alterAdminPassword(HttpSession session, Admin admin,String newPassword);
 }

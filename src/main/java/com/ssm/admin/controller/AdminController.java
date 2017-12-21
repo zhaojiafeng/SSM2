@@ -65,14 +65,24 @@ public class AdminController {
         return "admin/admin_modi";
     }
 
-
+    /**
+     * 登录方法
+     * @param session 在session中放置adminId
+     * @param admin 用户登录信息
+     * @return ajax类型数据
+     */
     @ResponseBody
     @RequestMapping("/login")
     public AjaxResult login(HttpSession session, Admin admin) {
         return adminService.login(session, admin);
     }
 
-
+    /**
+     * 生成验证码
+     * @param response 处理输出流
+     * @param session 在session中放置验证码
+     * @throws IOException 抛出异常
+     */
     @ResponseBody
     @RequestMapping(value = "/findVerifyCode")
     public void findVerifyCode(HttpServletResponse response, HttpSession session) throws IOException {
@@ -84,4 +94,38 @@ public class AdminController {
 
 
 
+
+
+
+
+
+
+
+    /**
+     * 编辑用户信息
+     * @param session 根据session获取adminId
+     * @param admin 变更信息的存储位置
+     * @return ajax
+     */
+    @ResponseBody
+    @RequestMapping("/editAdminInfo")
+    public AjaxResult editAdminInfo(HttpSession session, Admin admin) {
+//        return adminService.editAdminInfo(session, admin);
+        return null;
+    }
+
+
+    /**
+     * 编辑admin密码
+     * @param session 根据session获取adminId
+     * @param admin 密码存放位置
+     * @param newPassword 新密码
+     * @return ajax
+     */
+    @ResponseBody
+    @RequestMapping("/alterAdminPassword")
+    public AjaxResult alterAdminPassword(HttpSession session, Admin admin,String newPassword) {
+//        return adminService.editAdminInfo(session, admin);
+        return null;
+    }
 }
