@@ -65,13 +65,19 @@
 
     <insert id="addAdmin_Role">
         INSERT INTO admin_role (admin_id, role_id)
-        VALUES (#{adminId}, #{roleId})
+        VALUES (#{arg0}, #{arg1})
     </insert>
 
 
     <delete id="deleteAdmin">
         DELETE FROM admin_info
         WHERE admin_id = #{adminId}
+    </delete>
+
+
+    <delete id="deleteAdmin_Role">
+        DELETE FROM admin_role
+        WHERE admin_id = #{arg0} AND role_id = #{arg1}
     </delete>
 
 
@@ -101,6 +107,25 @@
     </update>
 
 
+    <select id="findLastAdmin" resultMap="BaseResultMap">
+        SELECT admin_id
+        FROM admin_info
+        ORDER BY admin_id DESC
+        LIMIT 1
+    </select>
+
+
+    <select id="findAdminsByAdminId" resultMap="BaseResultMap">
+        SELECT
+            a.admin_code,
+            a.name,
+            a.telephone,
+            a.email
+        FROM admin_info a
+        WHERE admin_id = #{adminId}
+    </select>
+
+
     <select id="findAdminsBySelected" resultMap="BaseResultMap">
         SELECT *
         FROM admin_info
@@ -114,6 +139,15 @@
             <if test=" password!=null and password!='' ">
                 AND password = #{password},
             </if>
+            <if test=" name!=null and name!='' ">
+                AND name = #{name},
+            </if>
+            <if test=" telephone!=null and telephone!='' ">
+                AND telephone = #{telephone},
+            </if>
+            <if test=" email!=null and email!='' ">
+                AND email = #{email}
+            </if>
         </where>
     </select>
 
@@ -122,5 +156,12 @@
         SELECT *
         FROM admin_info
         WHERE admin_code = #{adminCode}
+    </select>
+
+
+    <select id="findad_rByAdminIdRoleId" resultType="Integer">
+        SELECT count(*)
+        FROM admin_role ar LEFT JOIN admin_info a ON a.admin_id = ar.admin_id
+        WHERE a.admin_id = #{arg0} AND ar.role_id = #{arg1}
     </select>
 </mapper>

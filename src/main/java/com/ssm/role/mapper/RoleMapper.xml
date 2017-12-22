@@ -7,10 +7,12 @@
         <result column="name" jdbcType="VARCHAR" property="name"/>
     </resultMap>
 
+
     <insert id="insert" parameterType="com.ssm.role.bean.Role">
         INSERT INTO role_info (role_id, name)
         VALUES (#{roleId,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR})
     </insert>
+
 
     <insert id="addRole" parameterType="com.ssm.role.bean.Role">
         insert into role_info
@@ -32,20 +34,24 @@
         </trim>
     </insert>
 
+
     <insert id="addRole_module">
         INSERT INTO role_module (role_id, module_id)
         VALUES (#{arg0}, #{arg1})
     </insert>
+
 
     <delete id="deleteRole">
         DELETE FROM role_info
         WHERE role_id = #{roleId,jdbcType=INTEGER}
     </delete>
 
+
     <delete id="deleteRole_module">
         DELETE FROM role_module
         WHERE role_id = #{arg0} AND module_id = #{arg1}
     </delete>
+
 
     <update id="editRoleInfo">
         UPDATE role_info
@@ -57,10 +63,12 @@
         WHERE role_id = #{roleId}
     </update>
 
+
     <select id="findAllRoles" resultMap="BaseResultMap">
         SELECT *
         FROM role_info
     </select>
+
 
     <select id="findRoleBySelected" resultMap="BaseResultMap">
         SELECT * FROM role_info
@@ -74,10 +82,12 @@
         </where>
     </select>
 
+
     <select id="findRolesByAdminId" resultMap="BaseResultMap">
         SELECT *
         FROM role_info r LEFT JOIN admin_role a ON a.role_id=r.role_id
         WHERE a.admin_id = #{adminId}
+        ORDER BY r.role_id ASC
     </select>
 
 </mapper>

@@ -10,6 +10,7 @@ public class AdminError {
     private String passwordError;
     private String telephoneError;
     private String emailError;
+    private boolean noError;
 
     public String getNameError() {
         return nameError;
@@ -49,5 +50,13 @@ public class AdminError {
 
     public void setEmailError(String emailError) {
         this.emailError = emailError;
+    }
+
+    public boolean isNoError() {
+        return noError;
+    }
+
+    public void setNoError(boolean noError) {
+        this.noError = noError;
     }
 }

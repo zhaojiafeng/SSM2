@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -68,29 +69,38 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public AjaxResult addAdminAndRole(Admin admin, String roles) {
-
-        AdminError adminError = ValidateAdminError(admin);
-        if (adminError != null) {
-            return new AjaxResult("-1",adminError);
-        }else {
+        AdminError adminError = ValidateAdminInAddError(admin);
+        if (adminError.isNoError()) {
+            admin.setEnrolldate(new Date());
             adminMapper.addAdminSelect(admin);
-            addAdmin_role(admin, roles);
+            addAdmin_role(adminMapper.findLastAdmin().getAdminId(), roles);
             return new AjaxResult(null);
+        } else {
+            return new AjaxResult("-1", adminError);
         }
-
     }
+
 
     @Override
-    public AjaxResult findAllAdmins(Integer pageNum, Integer pageSize) {
-        PageHelper.startPage(pageNum, pageSize);
-        List<Admin> adminList = adminMapper.findAdminsBySelected(null);
-        for (Admin admin : adminList) {
-            List<Role> roleList = roleMapper.findRolesByAdminId(admin.getAdminId());
-            admin.setRoleList(roleList);
-        }
-        PageInfo<Admin> adminPageInfo = new PageInfo<>(adminList);
-        return new AjaxResult(adminPageInfo);
+    public AjaxResult deleteAdminByAdminId(int adminId) {
+        adminMapper.deleteAdmin(adminId);
+        return new AjaxResult(null);
     }
+
+
+    @Override
+    public AjaxResult editAdmin(Admin admin, String roles, String unroles) {
+        AdminError adminError = ValidateAdminInEditError(admin);
+        if (adminError.isNoError()) {
+            adminMapper.editAdminInfo(admin);
+            addAdmin_role(admin.getAdminId(), roles);
+            deleteAdmin_role(admin.getAdminId(),unroles);
+            return new AjaxResult(null);
+        } else {
+            return null;
+        }
+    }
+
 
     @Override
     public AjaxResult editAdminInfo(HttpSession session, Admin admin) {
@@ -104,47 +114,108 @@ public class AdminServiceImpl implements AdminService {
     }
 
 
+    @Override
+    public AjaxResult findAllAdmins(Integer pageNum, Integer pageSize) {
+        PageHelper.startPage(pageNum, pageSize);
+        List<Admin> adminList = adminMapper.findAdminsBySelected(null);
+        for (Admin admin : adminList) {
+            List<Role> roleList = roleMapper.findRolesByAdminId(admin.getAdminId());
+            admin.setRoleList(roleList);
+        }
+        PageInfo<Admin> adminPageInfo = new PageInfo<>(adminList);
+        return new AjaxResult(adminPageInfo);
+    }
 
 
-    private AdminError ValidateAdminError(Admin admin) {
+    @Override
+    public AjaxResult findAdminAndRolesByAdminId(int adminId) {
+        List<Admin> adminList = adminMapper.findAdminsByAdminId(adminId);
+        for (Admin ad : adminList) {
+            ad.setRoleList(roleMapper.findRolesByAdminId(adminId));
+        }
+        return new AjaxResult(adminList);
+    }
+
+
+    private AdminError ValidateAdminInEditError(Admin admin){
+        String name = admin.getName();
+        String telephone = admin.getTelephone();
+        String email = admin.getEmail();
+        AdminError adminError = new AdminError();
+        if ((!EasyMethod.ValidateString(name) || name.length() < 1 || name.length() > 20) ||
+           (!telephone.equals("") && !EasyMethod.ValidateTel(telephone)) ||
+           (!email.equals("") && !EasyMethod.ValidateEmail(email))
+        ){
+            if (!EasyMethod.ValidateString(name) || name.length() < 1 || name.length() > 20) {
+                adminError.setNameError("20长度以内的汉字、字母、数字的组合");
+            }
+            if (telephone != null && !EasyMethod.ValidateTel(telephone)) {
+                adminError.setTelephoneError("正确的电话号码格式：手机或固话");
+            }
+            if (email != "" && !EasyMethod.ValidateEmail(email)) {
+                adminError.setEmailError("50长度以内，正确的 email 格式");
+            }
+            adminError.setNoError(false);
+        }else {
+            adminError.setNoError(true);
+        }
+        return adminError;
+    }
+
+
+    private AdminError ValidateAdminInAddError(Admin admin) {
         String name = admin.getName();
         String adminCode = admin.getAdminCode();
         String password = admin.getPassword();
         String telephone = admin.getTelephone();
         String email = admin.getEmail();
         AdminError adminError = new AdminError();
-        if (    (!EasyMethod.ValidateString(name) || name.length()<1 || name.length()>20 ) ||
-                (!EasyMethod.ValidateString(adminCode) || adminCode.length()<1 || adminCode.length()>30 ) ||
-                (!EasyMethod.ValidateString(password) || password.length()<1 || password.length()>30 ) ||
-                (telephone != null && !EasyMethod.ValidateTel(telephone)) ||
-                (email != null && !EasyMethod.ValidateEmail(email))
-                ) {
-            if (!EasyMethod.ValidateString(name) || name.length()<1 || name.length()>20 ) {
+        if ((!EasyMethod.ValidateString(name) || name.length() < 1 || name.length() > 20) ||
+             (!EasyMethod.ValidateString(adminCode) || adminCode.length() < 1 || adminCode.length() > 30) ||
+             (!EasyMethod.ValidateString(password) || password.length() < 1 || password.length() > 30) ||
+             (!telephone.equals("") && !EasyMethod.ValidateTel(telephone)) ||
+             (!email.equals("") && !EasyMethod.ValidateEmail(email))
+        ) {
+            if (!EasyMethod.ValidateString(name) || name.length() < 1 || name.length() > 20) {
                 adminError.setNameError("20长度以内的汉字、字母、数字的组合");
             }
-            if (!EasyMethod.ValidateString(adminCode) || adminCode.length()<1 || adminCode.length()>30 ) {
+            if (!EasyMethod.ValidateString(adminCode) || adminCode.length() < 1 || adminCode.length() > 30) {
                 adminError.setAdminCodeError("30长度以内的字母、数字和下划线的组合");
             }
-            if (!EasyMethod.ValidateString(password) || password.length()<1 || password.length()>30 ) {
+            if (!EasyMethod.ValidateString(password) || password.length() < 1 || password.length() > 30) {
                 adminError.setPasswordError("30长度以内的字母、数字和下划线的组合");
             }
             if (telephone != null && !EasyMethod.ValidateTel(telephone)) {
                 adminError.setTelephoneError("正确的电话号码格式：手机或固话");
             }
-            if (email != null && !EasyMethod.ValidateEmail(email)) {
+            if (email != "" && !EasyMethod.ValidateEmail(email)) {
                 adminError.setEmailError("50长度以内，正确的 email 格式");
             }
+            adminError.setNoError(false);
+        } else {
+            adminError.setNoError(true);
         }
         return adminError;
     }
 
 
-
-    private void addAdmin_role(Admin admin, String roles) {
-        int adminId = adminMapper.findAdminsBySelected(admin).get(0).getAdminId();
+    private void addAdmin_role(int adminId, String roles) {
         String[] roleIdList = roles.split(",");
         for (String roleId : roleIdList) {
-            adminMapper.addAdmin_Role(adminId, Integer.parseInt(roleId));
+            int count = adminMapper.findad_rByAdminIdRoleId(adminId, Integer.parseInt(roleId));
+            if (count == 0) {
+                adminMapper.addAdmin_Role(adminId, Integer.parseInt(roleId));
+            }
+        }
+    }
+
+    private void deleteAdmin_role(int adminId, String roles) {
+        String[] roleIdList = roles.split(",");
+        for (String roleId : roleIdList) {
+            int count = adminMapper.findad_rByAdminIdRoleId(adminId, Integer.parseInt(roleId));
+            if (count != 0) {
+                adminMapper.deleteAdmin_Role(adminId,Integer.parseInt(roleId));
+            }
         }
     }
 }

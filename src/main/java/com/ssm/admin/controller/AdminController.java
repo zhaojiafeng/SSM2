@@ -99,6 +99,7 @@ public class AdminController {
 
     /**
      * 退出登录，清空session
+     *
      * @param session 清空session
      * @return 返回
      */
@@ -110,8 +111,13 @@ public class AdminController {
     }
 
 
-
-
+    /**
+     * 增加admin
+     *
+     * @param admin admin信息
+     * @param roles admin的角色
+     * @return null
+     */
     @ResponseBody
     @RequestMapping("/addAdminAndRole")
     public AjaxResult addAdminAndRole(Admin admin, String roles) {
@@ -119,23 +125,31 @@ public class AdminController {
     }
 
 
-
+    /**
+     * 删除admin
+     *
+     * @param adminId admin的id
+     * @return null
+     */
     @ResponseBody
-    @RequestMapping("/findAllAdmins")
-    public AjaxResult findAllAdmins(Integer currentPage, Integer pageSize) {
-        return adminService.findAllAdmins(currentPage, pageSize);
+    @RequestMapping("/deleteAdminByAdminId")
+    public AjaxResult deleteAdminByAdminId(int adminId) {
+        return adminService.deleteAdminByAdminId(adminId);
     }
 
 
-
-
-
-
-
-
-
-
-
+    /**
+     * 编辑admin信息
+     * @param admin 根据id更改信息
+     * @param roles 选中的角色
+     * @param unroles 未选中的角色
+     * @return 返回null
+     */
+    @ResponseBody
+    @RequestMapping("/editAdmin")
+    public AjaxResult editAdmin(Admin admin, String roles, String unroles) {
+        return adminService.editAdmin(admin, roles, unroles);
+    }
 
 
     /**
@@ -166,6 +180,33 @@ public class AdminController {
     public AjaxResult alterAdminPassword(HttpSession session, Admin admin, String newPassword) {
 //        return adminService.editAdminInfo(session, admin);
         return null;
+    }
+
+
+    /**
+     * admin显示 admin_list
+     *
+     * @param currentPage 当前页
+     * @param pageSize    每页数据个数
+     * @return 返回ajax数据
+     */
+    @ResponseBody
+    @RequestMapping("/findAllAdmins")
+    public AjaxResult findAllAdmins(Integer currentPage, Integer pageSize) {
+        return adminService.findAllAdmins(currentPage, pageSize);
+    }
+
+
+    /**
+     * admin编辑回显 admin_modi
+     *
+     * @param adminId admin的id
+     * @return 返回ajax数据
+     */
+    @ResponseBody
+    @RequestMapping("/findAdminAndRolesByAdminId")
+    public AjaxResult findAdminAndRolesByAdminId(int adminId) {
+        return adminService.findAdminAndRolesByAdminId(adminId);
     }
 
 

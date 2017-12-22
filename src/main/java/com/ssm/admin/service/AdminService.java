@@ -14,13 +14,15 @@ public interface AdminService {
 
     AjaxResult addAdminAndRole(Admin admin, String roles);
 
-    AjaxResult findAllAdmins(Integer pageNum, Integer pageSize);
+    AjaxResult deleteAdminByAdminId(int adminId);
 
-
-
-
+    AjaxResult editAdmin(Admin admin, String roles, String unroles);
 
     AjaxResult editAdminInfo(HttpSession session, Admin admin);
 
     AjaxResult alterAdminPassword(HttpSession session, Admin admin,String newPassword);
+
+    AjaxResult findAllAdmins(Integer pageNum, Integer pageSize);
+
+    AjaxResult findAdminAndRolesByAdminId(int adminId);
 }

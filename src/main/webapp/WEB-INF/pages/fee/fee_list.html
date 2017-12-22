@@ -7,12 +7,13 @@
     <link type="text/css" rel="stylesheet" media="all" href="../styles/global.css"/>
     <link type="text/css" rel="stylesheet" media="all" href="../styles/global_color.css"/>
     <script src="../../../js/jquery-3.2.1.js"></script>
+    <script src="../../../js/js-list-pagehelper.js"></script>
 </head>
 <body>
 <!--Logo区域开始-->
 <div id="header">
     <img src="../images/logo.png" alt="logo" class="left"/>
-    <a href="#">[退出]</a>
+    <a href="#" onclick="signOut();">[退出]</a>
 </div>
 <!--Logo区域结束-->
 <!--导航区域开始-->
@@ -106,6 +107,10 @@
     });
 
 
+    /**
+     * 根据页数返回 cost 数据
+     * @param currentPage
+     */
     function findCostsByPage(currentPage) {
         var BCSort = document.getElementById("baseCost").className;
         var BDSort = document.getElementById("baseDurat").className;
@@ -124,7 +129,9 @@
     }
 
 
-    //排序按钮的点击事件
+    /**
+     * 排序按钮的点击事件
+     */
     function sort(btnObj) {
         if (btnObj.className == "sort_desc") {
             btnObj.className = "sort_asc";
@@ -153,7 +160,10 @@
         });
     }
 
-    //变更状态
+
+    /**
+     * 改变状态
+     */
     function alterCostStatus(costId) {
         var r = window.confirm("确定要启用此资费吗？资费启用后将不能修改和删除。");
         if (r) {
@@ -170,12 +180,18 @@
         }
     }
 
-    //编辑资费
+
+    /**
+     * 转至编辑资费界面
+     */
     function toEditFee(costId) {
         window.location.href = '/fee_modi?costId=' + costId;
     }
 
-    //删除资费
+
+    /**
+     * 删除资费
+     */
     function deleteFee(costId) {
         var r = window.confirm("确定要删除此资费吗？");
         if (r) {
@@ -192,6 +208,11 @@
         }
     }
 
+
+    /**
+     * 显示 cost 的result
+     * @param result
+     */
     function showCostResult(result) {
         $("#currPage").val(result.data.pageNum);
         $("#totalPage").val(result.data.pages);
@@ -202,6 +223,10 @@
         }
     }
 
+
+    /**
+     * 显示 cost 的page
+     */
     function showCostPages() {
         var currentPage = $("#currPage").val();
         var totalPage = $("#totalPage").val();
@@ -215,17 +240,28 @@
         $("#pages").append(spanF).append(spanL);
     }
 
+
+    /**
+     * 上一页
+     */
     function toLastCostPage() {
         var currentPage = parseInt($("#currPage").val()) - 1;
         findCostsByPage(currentPage);
     }
 
+
+    /**
+     * 下一页
+     */
     function toNextCostPage() {
         var currentPage = parseInt($("#currPage").val()) + 1;
         findCostsByPage(currentPage);
     }
 
-    //显示cost
+
+    /**
+     * 显示cost
+     */
     function showCostInfo(cost) {
         var tdcostId = $("<td></td>").text(cost.costId);
         var tdname = $("<td></td>").append("<a href='/fee_detail?costId=" + cost.costId + "'>" + cost.name + "</a>");
@@ -258,10 +294,20 @@
         $("#boby").append(tr);
     }
 
+
+    /**
+     * 转至添加 cost 界面
+     */
     function toAddCost() {
         window.location.href = '/fee_add';
     }
 
+
+    /**
+     * 时间转换格式
+     * @param time
+     * @returns {string}
+     */
     function slewTime(time) {
         var normalTime = new Date(time);
         var year = normalTime.getFullYear();

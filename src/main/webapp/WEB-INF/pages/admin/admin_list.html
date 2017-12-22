@@ -55,7 +55,7 @@
             <div>角色：<input type="text" value="" class="text_search width200"/></div>
             <div><input type="button" value="搜索" class="btn_search"/></div>
             <input type="button" value="密码重置" class="btn_add" onclick="resetPwd();"/>
-            <input type="button" value="增加" class="btn_add" onclick="location.href='admin_add.html';"/>
+            <input type="button" value="增加" class="btn_add" onclick="toAdmin_add();"/>
         </div>
         <!--删除和密码重置的操作提示-->
         <div id="operate_result_info" class="operate_fail">
@@ -114,6 +114,10 @@
     });
 
 
+    /**
+     * 根据页数获取admin数据
+     * @param currentPage 当前页
+     */
     function findAdminsByPage(currentPage) {
         var pageSize = 5;
         $("#boby").empty();
@@ -130,7 +134,9 @@
     }
 
 
-    //显示角色详细信息
+    /**
+     * 显示角色详细信息
+     */
     function showDetail(flag, a) {
         var detailDiv = a.parentNode.getElementsByTagName("div")[0];
         if (flag) {
@@ -140,19 +146,39 @@
             detailDiv.style.display = "none";
     }
 
-    //重置密码
+
+    /**
+     * 重置密码
+     */
     function resetPwd() {
         alert("请至少选择一条数据！");
-        //document.getElementById("operate_result_info").style.display = "block";
-    }
-
-    //删除
-    function deleteAdmin() {
-        var r = window.confirm("确定要删除此管理员吗？");
         document.getElementById("operate_result_info").style.display = "block";
     }
 
-    //全选
+
+    /**
+     * 删除
+     */
+    function deleteAdmin(adminId) {
+        var r = window.confirm("确定要删除此管理员吗？");
+        if (r) {
+            $.ajax({
+                url: "/deleteAdminByAdminId",
+                data: {"adminId": adminId},
+                success: function (result) {
+                    if (result.code == "0") {
+                        document.getElementById("operate_result_info").style.display = "block";
+                        window.location.href = '/admin_list';
+                    }
+                }
+            });
+        }
+    }
+
+
+    /**
+     * 全选
+     */
     function selectAdmins(inputObj) {
         var inputArray = document.getElementById("datalist").getElementsByTagName("input");
         for (var i = 1; i < inputArray.length; i++) {
@@ -163,6 +189,10 @@
     }
 
 
+    /**
+     * 显示ajax返回的result
+     * @param result
+     */
     function showAdminResult(result) {
         $("#currPage").val(result.data.pageNum);
         $("#totalPage").val(result.data.pages);
@@ -174,6 +204,9 @@
     }
 
 
+    /**
+     * 显示页数
+     */
     function showAdminPages() {
         var currentPage = $("#currPage").val();
         var totalPage = $("#totalPage").val();
@@ -188,6 +221,10 @@
     }
 
 
+    /**
+     * 显示adminInfo
+     * @param admin
+     */
     function showAdminInfo(admin) {
         var tdcheck = $("<td></td>").append("<input type='checkbox' name='select' value='" + admin.adminId + "' />");
         var tdadminId = $("<td></td>").text(admin.adminId);
@@ -196,19 +233,19 @@
         var tdTelephone = $("<td></td>").text(admin.telephone);
         var tdEmail = $("<td></td>").text(admin.email);
         var tdEnrolldate = $("<td></td>").text(slewTime(admin.enrolldate));
-        var tdPermission ;
-        if (admin.roleList.length == 1){
+        var tdPermission;
+        if (admin.roleList.length == 1) {
             tdPermission = $("<td></td>").text(admin.roleList[0].name);
-        } else if (admin.roleList.length > 1){
+        } else if (admin.roleList.length > 1) {
             tdPermission = $("<td></td>").append(
                 "<a class='summary' onmouseover='showDetail(true,this);' onmouseout='showDetail(false,this);'>" +
                 admin.roleList[0].name +
-                "</a><div class='detail_info'>" + admin.roleList[0].name + "</div>");
+                "</a><div class='detail_info'>" + showRoleName(admin) + "</div>");
         } else {
             tdPermission = $("<td></td>").text("");
         }
         var tdOperate = $("<td></td>").append(
-            "<input type='button' value='修改' class='btn_modify' onclick='editAdmin(" + admin.adminId + ");'/>" +
+            "<input type='button' value='修改' class='btn_modify' onclick='toAdmin_modi(" + admin.adminId + ");'/>" +
             "<input type='button' value='删除' class='btn_delete' onclick='deleteAdmin(" + admin.adminId + ");'>");
 
         var tr = $("<tr></tr>").append(tdcheck).append(tdadminId).append(tdName).append(tdAdminCode).append(tdTelephone).append(tdEmail).append(tdEnrolldate).append(tdPermission).append(tdOperate);
@@ -216,15 +253,46 @@
     }
 
 
+    function showRoleName(admin) {
+        var rolenames = admin.roleList[0].name;
+        for (var i=1 ; i<admin.roleList.length ; i++){
+            rolenames += ',' + admin.roleList[i].name;
+        }
+        return rolenames;
+    }
+
+
+    /**
+     * 上一页
+     */
     function toLastAdminPage() {
         var currentPage = parseInt($("#currPage").val()) - 1;
         findAdminsByPage(currentPage);
     }
 
 
+    /**
+     * 下一页
+     */
     function toNextAdminPage() {
         var currentPage = parseInt($("#currPage").val()) + 1;
         findAdminsByPage(currentPage);
+    }
+
+
+    /**
+     * 跳转至admin的添加界面
+     */
+    function toAdmin_add() {
+        window.location.href = '/admin_add';
+    }
+
+
+    /**
+     * 跳转至admin的编辑界面
+     */
+    function toAdmin_modi(adminId) {
+        window.location.href = '/admin_modi?adminId=' + adminId;
     }
 </script>
 </html>
