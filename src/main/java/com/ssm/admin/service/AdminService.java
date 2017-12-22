@@ -12,6 +12,9 @@ public interface AdminService {
 
     AjaxResult login(HttpSession session, Admin admin);
 
+    AjaxResult addAdminAndRole(Admin admin, String roles);
+
+    AjaxResult findAllAdmins(Integer pageNum, Integer pageSize);
 
 
 

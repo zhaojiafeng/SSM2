@@ -58,8 +58,15 @@ public class RoleController {
 
     @ResponseBody
     @RequestMapping("/findAllRoles")
-    public AjaxResult findAllRoles(Integer currentPage, Integer pageSize) {
-        return roleService.findAllRoles(currentPage, pageSize);
+    public AjaxResult findAllRoles() {
+        return roleService.findAllRoles();
+    }
+
+
+    @ResponseBody
+    @RequestMapping("/findAllRolesByPage")
+    public AjaxResult findAllRolesByPage(Integer currentPage, Integer pageSize) {
+        return roleService.findAllRolesByPage(currentPage, pageSize);
     }
 
 

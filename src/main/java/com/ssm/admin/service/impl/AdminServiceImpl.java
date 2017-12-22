@@ -1,10 +1,16 @@
 package com.ssm.admin.service.impl;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.ssm.admin.bean.Admin;
+import com.ssm.admin.bean.AdminError;
 import com.ssm.admin.bean.LoginError;
 import com.ssm.admin.mapper.AdminMapper;
 import com.ssm.admin.service.AdminService;
+import com.ssm.role.bean.Role;
+import com.ssm.role.mapper.RoleMapper;
 import com.ssm.util.AjaxResult;
+import com.ssm.util.EasyMethod;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -19,6 +25,8 @@ public class AdminServiceImpl implements AdminService {
 
     @Resource
     private AdminMapper adminMapper;
+    @Resource
+    private RoleMapper roleMapper;
 
 
     @Override
@@ -33,7 +41,7 @@ public class AdminServiceImpl implements AdminService {
             if (admin.getPassword().isEmpty()) {
                 loginError.setPasswordError("密码不能为空");
             }
-            if (admin.getVerifyCode().isEmpty()){
+            if (admin.getVerifyCode().isEmpty()) {
                 loginError.setVerifyCodeError("验证码不能为空");
             }
         } else {
@@ -58,24 +66,85 @@ public class AdminServiceImpl implements AdminService {
     }
 
 
+    @Override
+    public AjaxResult addAdminAndRole(Admin admin, String roles) {
 
+        AdminError adminError = ValidateAdminError(admin);
+        if (adminError != null) {
+            return new AjaxResult("-1",adminError);
+        }else {
+            adminMapper.addAdminSelect(admin);
+            addAdmin_role(admin, roles);
+            return new AjaxResult(null);
+        }
 
+    }
 
-
-
-
-
-
-
-
+    @Override
+    public AjaxResult findAllAdmins(Integer pageNum, Integer pageSize) {
+        PageHelper.startPage(pageNum, pageSize);
+        List<Admin> adminList = adminMapper.findAdminsBySelected(null);
+        for (Admin admin : adminList) {
+            List<Role> roleList = roleMapper.findRolesByAdminId(admin.getAdminId());
+            admin.setRoleList(roleList);
+        }
+        PageInfo<Admin> adminPageInfo = new PageInfo<>(adminList);
+        return new AjaxResult(adminPageInfo);
+    }
 
     @Override
     public AjaxResult editAdminInfo(HttpSession session, Admin admin) {
         return null;
     }
 
+
     @Override
     public AjaxResult alterAdminPassword(HttpSession session, Admin admin, String newPassword) {
         return null;
+    }
+
+
+
+
+    private AdminError ValidateAdminError(Admin admin) {
+        String name = admin.getName();
+        String adminCode = admin.getAdminCode();
+        String password = admin.getPassword();
+        String telephone = admin.getTelephone();
+        String email = admin.getEmail();
+        AdminError adminError = new AdminError();
+        if (    (!EasyMethod.ValidateString(name) || name.length()<1 || name.length()>20 ) ||
+                (!EasyMethod.ValidateString(adminCode) || adminCode.length()<1 || adminCode.length()>30 ) ||
+                (!EasyMethod.ValidateString(password) || password.length()<1 || password.length()>30 ) ||
+                (telephone != null && !EasyMethod.ValidateTel(telephone)) ||
+                (email != null && !EasyMethod.ValidateEmail(email))
+                ) {
+            if (!EasyMethod.ValidateString(name) || name.length()<1 || name.length()>20 ) {
+                adminError.setNameError("20长度以内的汉字、字母、数字的组合");
+            }
+            if (!EasyMethod.ValidateString(adminCode) || adminCode.length()<1 || adminCode.length()>30 ) {
+                adminError.setAdminCodeError("30长度以内的字母、数字和下划线的组合");
+            }
+            if (!EasyMethod.ValidateString(password) || password.length()<1 || password.length()>30 ) {
+                adminError.setPasswordError("30长度以内的字母、数字和下划线的组合");
+            }
+            if (telephone != null && !EasyMethod.ValidateTel(telephone)) {
+                adminError.setTelephoneError("正确的电话号码格式：手机或固话");
+            }
+            if (email != null && !EasyMethod.ValidateEmail(email)) {
+                adminError.setEmailError("50长度以内，正确的 email 格式");
+            }
+        }
+        return adminError;
+    }
+
+
+
+    private void addAdmin_role(Admin admin, String roles) {
+        int adminId = adminMapper.findAdminsBySelected(admin).get(0).getAdminId();
+        String[] roleIdList = roles.split(",");
+        for (String roleId : roleIdList) {
+            adminMapper.addAdmin_Role(adminId, Integer.parseInt(roleId));
+        }
     }
 }

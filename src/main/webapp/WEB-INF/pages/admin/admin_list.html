@@ -6,7 +6,8 @@
     <title></title>
     <link type="text/css" rel="stylesheet" media="all" href="../styles/global.css"/>
     <link type="text/css" rel="stylesheet" media="all" href="../styles/global_color.css"/>
-
+    <script src="../../../js/jquery-3.2.1.js"></script>
+    <script src="../../../js/js-list-pagehelper.js"></script>
 </head>
 <body>
 <!--Logo区域开始-->
@@ -34,6 +35,8 @@
 <!--主要区域开始-->
 <div id="main">
     <form action="" method="">
+        <input id="currPage" type="hidden" value=""/>
+        <input id="totalPage" type="hidden" value=""/>
         <!--查询-->
         <div class="search_add">
             <div>
@@ -76,29 +79,9 @@
                     <th class="width100">拥有角色</th>
                     <th></th>
                 </tr>
-                <tbody id="t_body">
+                <tbody id="boby">
 
                 </tbody>
-                <tr>
-                    <td><input type="checkbox"/></td>
-                    <td>1</td>
-                    <td>贾强</td>
-                    <td>admin</td>
-                    <td>13077332357</td>
-                    <td>jiaqiang123@qq.com.cn</td>
-                    <td>2011-31-12</td>
-                    <td>
-                        <a class="summary" onmouseover="showDetail(true,this);" onmouseout="showDetail(false,this);">超级管理员...</a>
-                        <!--浮动的详细信息-->
-                        <div class="detail_info">
-                            超级管理员，角色管理员，账单管理员，报表管理员，业务账号管理员，账务账号管理员，aa，bb
-                        </div>
-                    </td>
-                    <td class="td_modi">
-                        <input type="button" value="修改" class="btn_modify" onclick="location.href='admin_modi.html';"/>
-                        <input type="button" value="删除" class="btn_delete" onclick="deleteAdmin();"/>
-                    </td>
-                </tr>
             </table>
         </div>
         <!--分页-->
@@ -113,6 +96,38 @@
 </div>
 </body>
 <script language="javascript" type="text/javascript">
+
+    var currentPage = 1;
+    var pageSize = 5;
+    $("#boby").empty();
+    $("#pages").empty();
+
+    $.ajax({
+        url: "/findAllAdmins",
+        data: {"currentPage": currentPage, "pageSize": pageSize},
+        success: function (result) {
+            console.log(result);
+            if (result.code == "0") {
+                showAdminResult(result);
+            }
+        }
+    });
+
+
+    function findAdminsByPage(currentPage) {
+        var pageSize = 5;
+        $("#boby").empty();
+        $("#pages").empty();
+
+        $.ajax({
+            url: "/findAllAdmins",
+            data: {"currentPage": currentPage, "pageSize": pageSize},
+            success: function (result) {
+                showAdminResult(result);
+            }
+        });
+
+    }
 
 
     //显示角色详细信息
@@ -145,6 +160,71 @@
                 inputArray[i].checked = inputObj.checked;
             }
         }
+    }
+
+
+    function showAdminResult(result) {
+        $("#currPage").val(result.data.pageNum);
+        $("#totalPage").val(result.data.pages);
+        showAdminPages();
+        for (var i = 0; i < result.data.list.length; i++) {
+            var admin = result.data.list[i];
+            showAdminInfo(admin);
+        }
+    }
+
+
+    function showAdminPages() {
+        var currentPage = $("#currPage").val();
+        var totalPage = $("#totalPage").val();
+        var spanF = $("<span></span>").append("第" + currentPage + "/" + totalPage + "页");
+        var spanL = $("<span></span>").append(
+            "<a href='#' onclick='findAdminsByPage(1)'>首页</a>" +
+            "<a href='#' onclick='toLastAdminPage()'>上一页</a>" +
+            "<a href='#' onclick='toNextAdminPage()'>下一页</a>" +
+            "<a href='#' onclick='findAdminsByPage(" + totalPage + ")'>尾页</a>"
+        );
+        $("#pages").append(spanF).append(spanL);
+    }
+
+
+    function showAdminInfo(admin) {
+        var tdcheck = $("<td></td>").append("<input type='checkbox' name='select' value='" + admin.adminId + "' />");
+        var tdadminId = $("<td></td>").text(admin.adminId);
+        var tdName = $("<td></td>").text(admin.name);
+        var tdAdminCode = $("<td></td>").text(admin.adminCode);
+        var tdTelephone = $("<td></td>").text(admin.telephone);
+        var tdEmail = $("<td></td>").text(admin.email);
+        var tdEnrolldate = $("<td></td>").text(slewTime(admin.enrolldate));
+        var tdPermission ;
+        if (admin.roleList.length == 1){
+            tdPermission = $("<td></td>").text(admin.roleList[0].name);
+        } else if (admin.roleList.length > 1){
+            tdPermission = $("<td></td>").append(
+                "<a class='summary' onmouseover='showDetail(true,this);' onmouseout='showDetail(false,this);'>" +
+                admin.roleList[0].name +
+                "</a><div class='detail_info'>" + admin.roleList[0].name + "</div>");
+        } else {
+            tdPermission = $("<td></td>").text("");
+        }
+        var tdOperate = $("<td></td>").append(
+            "<input type='button' value='修改' class='btn_modify' onclick='editAdmin(" + admin.adminId + ");'/>" +
+            "<input type='button' value='删除' class='btn_delete' onclick='deleteAdmin(" + admin.adminId + ");'>");
+
+        var tr = $("<tr></tr>").append(tdcheck).append(tdadminId).append(tdName).append(tdAdminCode).append(tdTelephone).append(tdEmail).append(tdEnrolldate).append(tdPermission).append(tdOperate);
+        $("#boby").append(tr);
+    }
+
+
+    function toLastAdminPage() {
+        var currentPage = parseInt($("#currPage").val()) - 1;
+        findAdminsByPage(currentPage);
+    }
+
+
+    function toNextAdminPage() {
+        var currentPage = parseInt($("#currPage").val()) + 1;
+        findAdminsByPage(currentPage);
     }
 </script>
 </html>

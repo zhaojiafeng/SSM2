@@ -13,7 +13,7 @@
 <!--Logo区域开始-->
 <div id="header">
     <img src="../images/logo.png" alt="logo" class="left"/>
-    <a href="#">[退出]</a>
+    <a href="#" onclick="signOut();">[退出]</a>
 </div>
 <!--Logo区域结束-->
 <!--导航区域开始-->
@@ -55,7 +55,7 @@
                     <th class="width600">拥有的权限</th>
                     <th class="td_modi"></th>
                 </tr>
-                <tbody id="t_body">
+                <tbody id="body">
                 </tbody>
             </table>
         </div>
@@ -75,20 +75,26 @@
     var currentPage = 1;
     var pageSize = 5;
     $.ajax({
-        url: "/findAllRoles",
+        url: "/findAllRolesByPage",
         data: {"currentPage": currentPage, "pageSize": pageSize},
         success: function (result) {
             showRoleResult(result);
         }
     });
 
+
+
+    /**
+     * 角色分页
+     * @param currentPage 当前页
+     */
     function findRolesByPage(currentPage) {
         var pageSize = 5;
         console.log(currentPage, pageSize);
-        $("#t_body").empty();
+        $("#body").empty();
         $("#pages").empty();
         $.ajax({
-            url: "/findAllRoles",
+            url: "/findAllRolesByPage",
             data: {"currentPage": currentPage, "pageSize": pageSize},
             success: function (result) {
                 showRoleResult(result);
@@ -96,17 +102,29 @@
         });
     }
 
-    //跳转添加角色界面
+
+
+    /**
+     * 跳转至添加角色界面
+     */
     function toAddRoleAndModules() {
         window.location.href = '/role_add';
     }
 
-    //跳转编辑界面
+
+
+    /**
+     * 跳转至编辑界面
+     */
     function toeditRoleAndModules(roleId) {
         window.location.href = '/role_modi?roleId=' + roleId;
     }
 
-    //删除角色
+
+
+    /**
+     * 删除角色
+     */
     function deleteRole(roleId) {
         var r = window.confirm("确定要删除此角色吗？");
         if (r) {
@@ -124,6 +142,12 @@
         }
     }
 
+
+
+    /**
+     * 页面显示数据
+     * @param result 返回的ajax数据
+     */
     function showRoleResult(result) {
         console.log(result);
         if (result.code == "0") {
@@ -137,7 +161,11 @@
         }
     }
 
-    //显示roleInfo
+
+
+    /**
+     * 显示roleInfo
+     */
     function showRoleInfo(role) {
         var tdAdminId = $("<td></td>").text(role.roleId);
         var tdName = $("<td></td>").text(role.name);
@@ -147,9 +175,14 @@
             "<input type='button' value='删除' class='btn_delete' onclick='deleteRole(" + role.roleId + ");'/>"
         );
         var tr = $("<tr></tr>").append(tdAdminId).append(tdName).append(tdModules).append(tdOperate);
-        $("#t_body").append(tr);
+        $("#body").append(tr);
     }
 
+
+
+    /**
+     * 显示页面数据
+     */
     function showpages() {
         var currentPage = $("#currPage").val();
         var totalPage = $("#totalPage").val();
@@ -163,11 +196,21 @@
         $("#pages").append(spanF).append(spanL);
     }
 
+
+
+    /**
+     * 上一页
+     */
     function toLastPage() {
         var currentPage = parseInt($("#currPage").val()) - 1;
         findRolesByPage(currentPage);
     }
 
+
+
+    /**
+     * 下一页
+     */
     function toNextPage() {
         var currentPage = parseInt($("#currPage").val()) + 1;
         findRolesByPage(currentPage);

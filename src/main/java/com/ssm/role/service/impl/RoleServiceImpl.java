@@ -71,7 +71,13 @@ public class RoleServiceImpl implements RoleService {
 
 
     @Override
-    public AjaxResult findAllRoles(Integer pageNum, Integer pageSize) {
+    public AjaxResult findAllRoles() {
+        return new AjaxResult(roleMapper.findAllRoles());
+    }
+
+
+    @Override
+    public AjaxResult findAllRolesByPage(Integer pageNum, Integer pageSize) {
         PageHelper.startPage(pageNum, pageSize);
         List<Role> roles = roleMapper.findAllRoles();
         addModulesToRoles(roles);

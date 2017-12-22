@@ -7,12 +7,13 @@
     <link type="text/css" rel="stylesheet" media="all" href="../styles/global.css"/>
     <link type="text/css" rel="stylesheet" media="all" href="../styles/global_color.css"/>
     <script src="../../../js/jquery-3.2.1.js"></script>
+    <script src="../../../js/js-list-pagehelper.js"></script>
 </head>
 <body>
 <!--Logo区域开始-->
 <div id="header">
     <img src="../images/logo.png" alt="logo" class="left"/>
-    <a href="#">[退出]</a>
+    <a href="#" onclick="signOut();">[退出]</a>
 </div>
 <!--Logo区域结束-->
 <!--导航区域开始-->
@@ -35,42 +36,49 @@
 <div id="main">
     <div id="save_result_info" class="save_success">保存成功！</div>
     <form action="" method="" class="main_form">
+
         <div class="text_info clearfix"><span>姓名：</span></div>
         <div class="input_info">
-            <input type="text"/>
+            <input id="adminame" type="text"/>
             <span class="required">*</span>
-            <div class="validate_msg_long">20长度以内的汉字、字母、数字的组合</div>
+            <div id="adminNameError" class="validate_msg_long">20长度以内的汉字、字母、数字的组合</div>
         </div>
+
         <div class="text_info clearfix"><span>管理员账号：</span></div>
         <div class="input_info">
-            <input type="text"/>
+            <input id="admincode" type="text"/>
             <span class="required">*</span>
-            <div class="validate_msg_long">30长度以内的字母、数字和下划线的组合</div>
+            <div id="adminCodeError" class="validate_msg_long">30长度以内的字母、数字和下划线的组合</div>
         </div>
+
         <div class="text_info clearfix"><span>密码：</span></div>
         <div class="input_info">
-            <input type="password"/>
+            <input id="password" type="password"/>
             <span class="required">*</span>
-            <div class="validate_msg_long error_msg">30长度以内的字母、数字和下划线的组合</div>
+            <div id="passwordError" class="validate_msg_long error_msg">30长度以内的字母、数字和下划线的组合</div>
         </div>
+
         <div class="text_info clearfix"><span>重复密码：</span></div>
         <div class="input_info">
-            <input type="password"/>
+            <input id="repeatpassword" type="password"/>
             <span class="required">*</span>
-            <div class="validate_msg_long error_msg">两次密码必须相同</div>
+            <div id="repeatPasswordError" class="validate_msg_long error_msg">两次密码必须相同</div>
         </div>
+
         <div class="text_info clearfix"><span>电话：</span></div>
         <div class="input_info">
-            <input type="text" class="width200"/>
+            <input id="telephone" type="text" class="width200"/>
             <span class="required">*</span>
-            <div class="validate_msg_medium error_msg">正确的电话号码格式：手机或固话</div>
+            <div id="telephoneError" class="validate_msg_medium error_msg">正确的电话号码格式：手机或固话</div>
         </div>
+
         <div class="text_info clearfix"><span>Email：</span></div>
         <div class="input_info">
-            <input type="text" class="width200"/>
+            <input id="email" type="text" class="width200"/>
             <span class="required">*</span>
-            <div class="validate_msg_medium error_msg">50长度以内，正确的 email 格式</div>
+            <div id="emailError" class="validate_msg_medium error_msg">50长度以内，正确的 email 格式</div>
         </div>
+
         <div class="text_info clearfix"><span>角色：</span></div>
         <div class="input_info_high">
             <div class="input_info_scroll">
@@ -85,11 +93,11 @@
                 </ul>
             </div>
             <span class="required">*</span>
-            <div class="validate_msg_tiny error_msg">至少选择一个</div>
+            <div id="roleError" class="validate_msg_tiny error_msg">至少选择一个</div>
         </div>
         <div class="button_info clearfix">
-            <input type="button" value="保存" class="btn_save" onclick="showResult();"/>
-            <input type="button" value="取消" class="btn_save"/>
+            <input type="button" value="保存" class="btn_save" onclick="addAdminAndRoles();"/>
+            <input type="button" value="取消" class="btn_save" onclick="backToAdmin_list();"/>
         </div>
     </form>
 </div>
@@ -101,17 +109,113 @@
 </div>
 </body>
 <script language="javascript" type="text/javascript">
-    //保存成功的提示消息
-    function showResult() {
-        showResultDiv(true);
-        window.setTimeout("showResultDiv(false);", 3000);
-    }
-    function showResultDiv(flag) {
-        var divResult = document.getElementById("save_result_info");
-        if (flag)
-            divResult.style.display = "block";
-        else
-            divResult.style.display = "none";
-    }
+
+    $.ajax({
+        url: "/findAllRoles",
+        success: function (result) {
+            console.log(result);
+            if (result.code == "0") {
+                for (var i = 0; i < result.data.length; i++) {
+                    var tdrole;
+                }
+            }
+        }
+    });
+
+//    function addAdminAndRoles() {
+//        var adminame = $("#adminame").val();
+//        var admincode = $("#admincode").val();
+//        var password = $("#password").val();
+//        var repeatpassword = $("#repeatpassword").val();
+//        var telephone = $("#telephone").val();
+//        var email = $("#email").val();
+//
+//        var obj = document.getElementsByName('role');
+//        var roles = '';
+//        for (var i = 0; i < obj.length; i++) {
+//            if (obj[i].checked) {
+//                roles += obj[i].value + ',';
+//            }
+//        }
+//
+//        $("#adminNameError").empty();
+//        $("#adminCodeError").empty();
+//        $("#passwordError").empty();
+//        $("#repeatPasswordError").empty();
+//        $("#telephoneError").empty();
+//        $("#emailError").empty();
+//        $("#roleError").empty();
+//
+//        if (
+//            adminame != '' && adminame > 0 && adminame < 20 &&
+//            admincode != '' && admincode > 0 && admincode < 30 &&
+//            password != '' && password > 0 && password < 30 &&
+//            repeatpassword != '' && repeatpassword > 0 && repeatpassword < 30 &&
+//            password == repeatpassword &&
+//            rolenames != ''
+//        ) {
+//            $.ajax({
+//                url: "/addAdminAndRole",
+//                data: {"name":adminame,"adminCode":admincode,"password":password,
+//                    "telephone":telephone,"email":email,"roles":rolenames},
+//                success: function (result) {
+//                    console.log(result);
+//                    if (result.code == "0"){
+//                        showResultDiv(true);
+//                        window.setTimeout("showResultDiv(false);", 3000);
+//                        backToAdmin_list();
+//                    }else if (result.code == "-1"){
+//                        var message = result.message;
+//                        $("#adminNameError").val(message.nameError);
+//                        $("#adminCodeError").val(message.adminCodeError);
+//                        $("#passwordError").val(message.passwordError);
+//                        $("#telephoneError").val(message.telephoneError);
+//                        $("#emailError").val(message.emailError);
+//                    }
+//                }
+//            })
+//        } else {
+//            if (adminame == '' || adminame < 0 || adminame > 20) {
+//                $("#adminNameError").val("20长度以内的汉字、字母、数字的组合");
+//            }
+//            if (admincode == '' && admincode < 0 && admincode > 30) {
+//                $("#adminCodeError").val("30长度以内的字母、数字和下划线的组合");
+//            }
+//            if (password == '' && password < 0 && password > 30) {
+//                $("#passwordError").val("30长度以内的字母、数字和下划线的组合");
+//            }
+//            if (repeatpassword == '' && repeatpassword < 0 && repeatpassword > 30) {
+//                $("#repeatPasswordError").val("30长度以内的字母、数字和下划线的组合");
+//            } else {
+//                if (password != repeatpassword) {
+//                    $("#repeatPasswordError").val("两次密码必须相同");
+//                }
+//            }
+//            if (rolenames == '') {
+//                $("#roleError").val("至少选择一个");
+//            }
+//        }
+//    }
+//
+//
+//    //返回admin_list
+//    function backToAdmin_list() {
+//        window.location.href = '/admin_list';
+//    }
+//
+//
+//    //保存成功的提示消息
+//    function showResult() {
+//        showResultDiv(true);
+//        window.setTimeout("showResultDiv(false);", 3000);
+//    }
+//
+//    function showResultDiv(flag) {
+//        var divResult = document.getElementById("save_result_info");
+//        if (flag)
+//            divResult.style.display = "block";
+//        else
+//            divResult.style.display = "none";
+//    }
 </script>
 </html>

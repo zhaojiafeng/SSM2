@@ -14,7 +14,9 @@ public interface RoleService {
 
     AjaxResult deleteRole(int roleId);
 
-    AjaxResult findAllRoles(Integer pageNum, Integer pageSize);
+    AjaxResult findAllRoles();
+
+    AjaxResult findAllRolesByPage(Integer pageNum, Integer pageSize);
 
     AjaxResult findRoleAndModulesByRoleId(Role role);
 

@@ -7,12 +7,13 @@
     <link type="text/css" rel="stylesheet" media="all" href="../styles/global.css"/>
     <link type="text/css" rel="stylesheet" media="all" href="../styles/global_color.css"/>
     <script src="../../../js/jquery-3.2.1.js"></script>
+    <script src="../../../js/js-list-pagehelper.js"></script>
 </head>
 <body>
 <!--Logo区域开始-->
 <div id="header">
     <img src="../images/logo.png" alt="logo" class="left"/>
-    <a href="#">[退出]</a>
+    <a href="#" onclick="signOut();">[退出]</a>
 </div>
 <!--Logo区域结束-->
 <!--导航区域开始-->
@@ -98,6 +99,11 @@
         }
     });
 
+
+
+    /**
+     * 修改角色和权限
+     */
     function editRoleAndModules() {
         var roleName = $("#rolename").val();
         var obj = document.getElementsByName('module');
@@ -128,23 +134,19 @@
                     console.log(result);
                     if (result.code == "0") {
                         showResultDiv(true);
-                        window.setTimeout("showResultDiv(true);", 3000);
-                        window.setTimeout("toRole_list()", 3000);
+                        window.setTimeout("showResultDiv(true);", 1500);
+                        window.setTimeout("backToRoleList()", 1500);
                     }
                 }
             });
         }
     }
 
-    //保存成功的提示消息
-    function showResult() {
-        showResultDiv(true);
-        window.setTimeout("showResultDiv(true);", 3000);
-    }
 
-    function toRole_list() {
+    function backToRoleList() {
         window.location.href = '/role_list';
     }
+
 
     function showResultDiv(flag) {
         var divResult = document.getElementById("save_result_info");

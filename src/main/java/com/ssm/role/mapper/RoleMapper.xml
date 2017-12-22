@@ -44,7 +44,7 @@
 
     <delete id="deleteRole_module">
         DELETE FROM role_module
-        WHERE role_id=#{arg0} AND module_id=#{arg1}
+        WHERE role_id = #{arg0} AND module_id = #{arg1}
     </delete>
 
     <update id="editRoleInfo">
@@ -72,6 +72,12 @@
                 AND name = #{name}
             </if>
         </where>
+    </select>
+
+    <select id="findRolesByAdminId" resultMap="BaseResultMap">
+        SELECT *
+        FROM role_info r LEFT JOIN admin_role a ON a.role_id=r.role_id
+        WHERE a.admin_id = #{adminId}
     </select>
 
 </mapper>

@@ -11,14 +11,6 @@
         <result column="enrolldate" jdbcType="TIMESTAMP" property="enrolldate"/>
     </resultMap>
 
-    <insert id="insert" parameterType="com.ssm.admin.bean.Admin">
-        INSERT INTO admin_info (admin_id, admin_code, password,
-                                name, telephone, email,
-                                enrolldate)
-        VALUES (#{adminId,jdbcType=INTEGER}, #{adminCode,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR},
-                #{name,jdbcType=VARCHAR}, #{telephone,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR},
-                #{enrolldate,jdbcType=TIMESTAMP})
-    </insert>
 
     <insert id="addAdminSelect" parameterType="com.ssm.admin.bean.Admin">
         insert into admin_info
@@ -71,6 +63,12 @@
     </insert>
 
 
+    <insert id="addAdmin_Role">
+        INSERT INTO admin_role (admin_id, role_id)
+        VALUES (#{adminId}, #{roleId})
+    </insert>
+
+
     <delete id="deleteAdmin">
         DELETE FROM admin_info
         WHERE admin_id = #{adminId}
@@ -118,6 +116,7 @@
             </if>
         </where>
     </select>
+
 
     <select id="findAdminByAdminCode" resultMap="BaseResultMap">
         SELECT *

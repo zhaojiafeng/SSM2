@@ -21,4 +21,6 @@ public interface RoleMapper {
     List<Role> findAllRoles();
 
     List<Role> findRoleBySelected(Role role);
+
+    List<Role> findRolesByAdminId(int adminId);
 }

@@ -1,6 +1,9 @@
 package com.ssm.admin.bean;
 
+import com.ssm.role.bean.Role;
+
 import java.util.Date;
+import java.util.List;
 
 public class Admin {
 
@@ -12,6 +15,7 @@ public class Admin {
     private String email;
     private Date enrolldate;
     private String verifyCode;
+    private List<Role> roleList;
 
     public Integer getAdminId() {
         return adminId;
@@ -75,5 +79,13 @@ public class Admin {
 
     public void setVerifyCode(String verifyCode) {
         this.verifyCode = verifyCode;
+    }
+
+    public List<Role> getRoleList() {
+        return roleList;
+    }
+
+    public void setRoleList(List<Role> roleList) {
+        this.roleList = roleList;
     }
 }
