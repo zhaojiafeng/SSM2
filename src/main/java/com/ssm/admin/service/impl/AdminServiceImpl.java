@@ -7,6 +7,7 @@ import com.ssm.admin.bean.AdminError;
 import com.ssm.admin.bean.LoginError;
 import com.ssm.admin.mapper.AdminMapper;
 import com.ssm.admin.service.AdminService;
+import com.ssm.module.mapper.ModuleMapper;
 import com.ssm.role.bean.Role;
 import com.ssm.role.mapper.RoleMapper;
 import com.ssm.util.AjaxResult;
@@ -15,7 +16,9 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -28,6 +31,8 @@ public class AdminServiceImpl implements AdminService {
     private AdminMapper adminMapper;
     @Resource
     private RoleMapper roleMapper;
+    @Resource
+    private ModuleMapper moduleMapper;
 
 
     @Override
@@ -94,23 +99,63 @@ public class AdminServiceImpl implements AdminService {
         if (adminError.isNoError()) {
             adminMapper.editAdminInfo(admin);
             addAdmin_role(admin.getAdminId(), roles);
-            deleteAdmin_role(admin.getAdminId(),unroles);
+            deleteAdmin_role(admin.getAdminId(), unroles);
             return new AjaxResult(null);
         } else {
-            return null;
+            return new AjaxResult("-1", adminError);
         }
     }
 
 
     @Override
-    public AjaxResult editAdminInfo(HttpSession session, Admin admin) {
-        return null;
+    public AjaxResult editAdminInfo(Admin admin) {
+        AdminError adminError = ValidateAdminInEditError(admin);
+        if (adminError.isNoError()) {
+            adminMapper.editAdminInfo(admin);
+            return new AjaxResult(null);
+        } else {
+            return new AjaxResult("-1", adminError);
+        }
     }
 
 
     @Override
-    public AjaxResult alterAdminPassword(HttpSession session, Admin admin, String newPassword) {
-        return null;
+    public AjaxResult alterAdminPassword(Admin admin, String newPassword) {
+        List<Admin> adminList = adminMapper.findAdminByAdminId(admin.getAdminId());
+        if (!adminList.isEmpty()) {
+            AdminError adminError = new AdminError();
+            if (EasyMethod.ValidateString(admin.getPassword()) && EasyMethod.ValidateString(newPassword)) {
+                if (admin.getPassword().equals(adminList.get(0).getPassword())) {
+                    admin.setPassword(newPassword);
+                    adminMapper.editAdminInfo(admin);
+                    return new AjaxResult(null);
+                } else {
+                    adminError.setPasswordError("原密码输入有误，请确认");
+                    return new AjaxResult("-1", adminError);
+                }
+            } else {
+                if (!EasyMethod.ValidateString(admin.getPassword())) {
+                    adminError.setPasswordError("30长度以内的字母、数字和下划线的组合");
+                }
+                if (!EasyMethod.ValidateString(newPassword)) {
+                    adminError.setNewPasswordError("30长度以内的字母、数字和下划线的组合");
+                }
+                return new AjaxResult("-1", adminError);
+            }
+        }
+        return new AjaxResult("-2", "你可长点心把，你登录了么？？？");
+    }
+
+
+    @Override
+    public AjaxResult resetPwd(String adminIds) {
+        String[] adIds = adminIds.split(",");
+        List adminIdList = new ArrayList();
+        for (String adminId : adIds) {
+            adminIdList.add(adminId);
+        }
+        adminMapper.resetPwd(adminIdList);
+        return new AjaxResult(null);
     }
 
 
@@ -128,8 +173,27 @@ public class AdminServiceImpl implements AdminService {
 
 
     @Override
+    public AjaxResult advanceSearchAdmin(Integer moduleId, String rolename, Integer pageNum, Integer pageSize) {
+        List<Admin> temp = adminMapper.findAdminIdByRolenameModuleId(rolename, moduleId);
+        List list = new ArrayList();
+        for (Admin admin: temp) {
+            list.add(admin.getAdminId());
+        }
+        List adminIdList = new ArrayList(new HashSet(list));
+        PageHelper.startPage(pageNum, pageSize);
+        List<Admin> adminList = adminMapper.findAdminsInAdminIds(adminIdList);
+        for (Admin admin : adminList) {
+            List<Role> roleList = roleMapper.findRolesByAdminId(admin.getAdminId());
+            admin.setRoleList(roleList);
+        }
+        PageInfo<Admin> adminPageInfo = new PageInfo<>(adminList);
+        return new AjaxResult(adminPageInfo);
+    }
+
+
+    @Override
     public AjaxResult findAdminAndRolesByAdminId(int adminId) {
-        List<Admin> adminList = adminMapper.findAdminsByAdminId(adminId);
+        List<Admin> adminList = adminMapper.findAdminByAdminId(adminId);
         for (Admin ad : adminList) {
             ad.setRoleList(roleMapper.findRolesByAdminId(adminId));
         }
@@ -137,15 +201,15 @@ public class AdminServiceImpl implements AdminService {
     }
 
 
-    private AdminError ValidateAdminInEditError(Admin admin){
+    private AdminError ValidateAdminInEditError(Admin admin) {
         String name = admin.getName();
         String telephone = admin.getTelephone();
         String email = admin.getEmail();
         AdminError adminError = new AdminError();
         if ((!EasyMethod.ValidateString(name) || name.length() < 1 || name.length() > 20) ||
-           (!telephone.equals("") && !EasyMethod.ValidateTel(telephone)) ||
-           (!email.equals("") && !EasyMethod.ValidateEmail(email))
-        ){
+                (!telephone.equals("") && !EasyMethod.ValidateTel(telephone)) ||
+                (!email.equals("") && !EasyMethod.ValidateEmail(email))
+                ) {
             if (!EasyMethod.ValidateString(name) || name.length() < 1 || name.length() > 20) {
                 adminError.setNameError("20长度以内的汉字、字母、数字的组合");
             }
@@ -156,7 +220,7 @@ public class AdminServiceImpl implements AdminService {
                 adminError.setEmailError("50长度以内，正确的 email 格式");
             }
             adminError.setNoError(false);
-        }else {
+        } else {
             adminError.setNoError(true);
         }
         return adminError;
@@ -171,11 +235,11 @@ public class AdminServiceImpl implements AdminService {
         String email = admin.getEmail();
         AdminError adminError = new AdminError();
         if ((!EasyMethod.ValidateString(name) || name.length() < 1 || name.length() > 20) ||
-             (!EasyMethod.ValidateString(adminCode) || adminCode.length() < 1 || adminCode.length() > 30) ||
-             (!EasyMethod.ValidateString(password) || password.length() < 1 || password.length() > 30) ||
-             (!telephone.equals("") && !EasyMethod.ValidateTel(telephone)) ||
-             (!email.equals("") && !EasyMethod.ValidateEmail(email))
-        ) {
+                (!EasyMethod.ValidateString(adminCode) || adminCode.length() < 1 || adminCode.length() > 30) ||
+                (!EasyMethod.ValidateString(password) || password.length() < 1 || password.length() > 30) ||
+                (!telephone.equals("") && !EasyMethod.ValidateTel(telephone)) ||
+                (!email.equals("") && !EasyMethod.ValidateEmail(email))
+                ) {
             if (!EasyMethod.ValidateString(name) || name.length() < 1 || name.length() > 20) {
                 adminError.setNameError("20长度以内的汉字、字母、数字的组合");
             }
@@ -209,12 +273,13 @@ public class AdminServiceImpl implements AdminService {
         }
     }
 
+
     private void deleteAdmin_role(int adminId, String roles) {
         String[] roleIdList = roles.split(",");
         for (String roleId : roleIdList) {
             int count = adminMapper.findad_rByAdminIdRoleId(adminId, Integer.parseInt(roleId));
             if (count != 0) {
-                adminMapper.deleteAdmin_Role(adminId,Integer.parseInt(roleId));
+                adminMapper.deleteAdmin_Role(adminId, Integer.parseInt(roleId));
             }
         }
     }

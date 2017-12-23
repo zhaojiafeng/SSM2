@@ -170,14 +170,15 @@
                     "email": email, "roles": roles, "unroles": unroles
                 },
                 success: function (result) {
+                    console.log(result);
                     if (result.code == "0") {
                         showResultDiv(true);
                         window.setTimeout("showResultDiv(true);", 1500);
                         window.setTimeout("backToAdmin_list();", 1500);
                     } else if (result.code == "-1") {
-                        $("#adminNameError").text(result.message.nameError);
-                        $("#telephoneError").text(result.message.telephoneError);
-                        $("#emailError").text(result.message.emailError);
+                        $("#adminNameError").append(result.message.nameError);
+                        $("#telephoneError").append(result.message.telephoneError);
+                        $("#emailError").append(result.message.emailError);
                     }
                 }
             })

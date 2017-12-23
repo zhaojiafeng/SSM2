@@ -8,6 +8,7 @@ public class AdminError {
     private String nameError;
     private String adminCodeError;
     private String passwordError;
+    private String newPasswordError;
     private String telephoneError;
     private String emailError;
     private boolean noError;
@@ -34,6 +35,14 @@ public class AdminError {
 
     public void setPasswordError(String passwordError) {
         this.passwordError = passwordError;
+    }
+
+    public String getNewPasswordError() {
+        return newPasswordError;
+    }
+
+    public void setNewPasswordError(String newPasswordError) {
+        this.newPasswordError = newPasswordError;
     }
 
     public String getTelephoneError() {

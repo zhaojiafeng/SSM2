@@ -140,8 +140,9 @@ public class AdminController {
 
     /**
      * 编辑admin信息
-     * @param admin 根据id更改信息
-     * @param roles 选中的角色
+     *
+     * @param admin   根据id更改信息
+     * @param roles   选中的角色
      * @param unroles 未选中的角色
      * @return 返回null
      */
@@ -162,8 +163,8 @@ public class AdminController {
     @ResponseBody
     @RequestMapping("/editAdminInfo")
     public AjaxResult editAdminInfo(HttpSession session, Admin admin) {
-//        return adminService.editAdminInfo(session, admin);
-        return null;
+        admin.setAdminId((int) session.getAttribute("adminId"));
+        return adminService.editAdminInfo(admin);
     }
 
 
@@ -178,8 +179,18 @@ public class AdminController {
     @ResponseBody
     @RequestMapping("/alterAdminPassword")
     public AjaxResult alterAdminPassword(HttpSession session, Admin admin, String newPassword) {
-//        return adminService.editAdminInfo(session, admin);
-        return null;
+        admin.setAdminId((int) session.getAttribute("adminId"));
+        return adminService.alterAdminPassword(admin,newPassword);
+    }
+
+
+    /**
+     * 重置密码
+     */
+    @ResponseBody
+    @RequestMapping("/resetPwd")
+    public AjaxResult resetPwd(String adminIds) {
+        return adminService.resetPwd(adminIds);
     }
 
 
@@ -194,6 +205,30 @@ public class AdminController {
     @RequestMapping("/findAllAdmins")
     public AjaxResult findAllAdmins(Integer currentPage, Integer pageSize) {
         return adminService.findAllAdmins(currentPage, pageSize);
+    }
+
+
+    /**
+     * 高级搜索admin
+     *
+     * @param currentPage 当前页
+     * @param pageSize    每页的数量
+     * @return admin的ajax数据
+     */
+    @ResponseBody
+    @RequestMapping("/advanceSearchAdmin")
+    public AjaxResult advanceSearchAdmin(Integer moduleId, String rolename, Integer currentPage, Integer pageSize) {
+        return adminService.advanceSearchAdmin(moduleId, rolename, currentPage, pageSize);
+    }
+
+
+    /**
+     * 个人信息处回显
+     */
+    @ResponseBody
+    @RequestMapping("/findAdminBySession")
+    public AjaxResult findAdminBySession(HttpSession session) {
+        return adminService.findAdminAndRolesByAdminId((int) session.getAttribute("adminId"));
     }
 
 

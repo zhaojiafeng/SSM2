@@ -18,11 +18,15 @@ public interface AdminService {
 
     AjaxResult editAdmin(Admin admin, String roles, String unroles);
 
-    AjaxResult editAdminInfo(HttpSession session, Admin admin);
+    AjaxResult editAdminInfo(Admin admin);
 
-    AjaxResult alterAdminPassword(HttpSession session, Admin admin,String newPassword);
+    AjaxResult alterAdminPassword(Admin admin,String newPassword);
+
+    AjaxResult resetPwd(String adminIds);
 
     AjaxResult findAllAdmins(Integer pageNum, Integer pageSize);
+
+    AjaxResult advanceSearchAdmin(Integer moduleId, String rolename, Integer pageNum, Integer pageSize);
 
     AjaxResult findAdminAndRolesByAdminId(int adminId);
 }

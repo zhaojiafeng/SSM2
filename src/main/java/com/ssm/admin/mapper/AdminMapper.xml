@@ -81,6 +81,11 @@
     </delete>
 
 
+    <update id="resetPwd">
+
+    </update>
+
+
     <update id="editAdminInfo">
         UPDATE admin_info
         <set>
@@ -115,7 +120,7 @@
     </select>
 
 
-    <select id="findAdminsByAdminId" resultMap="BaseResultMap">
+    <select id="findAdminByAdminId" resultMap="BaseResultMap">
         SELECT
             a.admin_code,
             a.name,
@@ -123,6 +128,18 @@
             a.email
         FROM admin_info a
         WHERE admin_id = #{adminId}
+    </select>
+
+
+    <select id="findAdminsInAdminIds" resultMap="BaseResultMap">
+        SELECT * FROM admin_info
+        <where>
+            <if test=" list!=null and list.size>0 ">
+                <foreach collection="list" index="index" item="adminId" open=" admin_id IN (" close=")" separator=",">
+                    #{adminId}
+                </foreach>
+            </if>
+        </where>
     </select>
 
 
@@ -159,9 +176,26 @@
     </select>
 
 
+    <select id="findAdminIdByRolenameModuleId" resultMap="BaseResultMap">
+        SELECT admin_id
+        FROM admin_role ar
+        LEFT JOIN role_info r ON ar.role_id=r.role_id
+        LEFT JOIN role_module rm ON ar.role_id = rm.role_id
+        <where>
+            <if test=" rolename!=null and rolename!='' ">
+                AND r.name LIKE '%${rolename}%'
+            </if>
+            <if test=" moduleId!='0' ">
+                AND rm.module_id=#{moduleId}
+            </if>
+        </where>
+    </select>
+
+
     <select id="findad_rByAdminIdRoleId" resultType="Integer">
         SELECT count(*)
         FROM admin_role ar LEFT JOIN admin_info a ON a.admin_id = ar.admin_id
         WHERE a.admin_id = #{arg0} AND ar.role_id = #{arg1}
     </select>
+
 </mapper>

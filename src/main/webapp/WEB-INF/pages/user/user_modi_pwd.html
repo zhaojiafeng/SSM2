@@ -40,24 +40,24 @@
         <div class="input_info">
             <input id="password" type="password" class="width200"/>
             <span class="required">*</span>
-            <div id="passwordError" class="validate_msg_medium">30长度以内的字母、数字和下划线的组合</div>
+            <div id="passwordError" class="validate_msg_medium"></div>
         </div>
 
         <div class="text_info clearfix"><span>新密码：</span></div>
         <div class="input_info">
             <input id="newPassword" type="password" class="width200"/>
             <span class="required">*</span>
-            <div id="newPasswordError" class="validate_msg_medium">30长度以内的字母、数字和下划线的组合</div>
+            <div id="newPasswordError" class="validate_msg_medium"></div>
         </div>
 
         <div class="text_info clearfix"><span>重复新密码：</span></div>
         <div class="input_info">
             <input id="repeatNewpwd" type="password" class="width200"/><span class="required">*</span>
-            <div id="repeatNewPwdError" class="validate_msg_medium">两次新密码必须相同</div>
+            <div id="repeatNewPwdError" class="validate_msg_medium"></div>
         </div>
 
         <div class="button_info clearfix">
-            <input type="button" value="保存" class="btn_save" onclick="showResult();"/>
+            <input type="button" value="保存" class="btn_save" onclick="alterAdminPassword();"/>
             <!--<input type="button" value="取消" class="btn_save"/>-->
         </div>
     </form>
@@ -79,9 +79,9 @@
         $("#newPasswordError").empty();
         $("#repeatNewPwdError").empty();
 
-        if (password != '' && password.length > 0 && password.length < 30 &&
-            newPassword != '' && newPassword.length > 0 && newPassword.length < 30 &&
-            repeatNewpwd != '' && repeatNewpwd.length > 0 && repeatNewpwd.length < 30 &&
+        if (password.length > 0 && password.length < 30 &&
+            newPassword.length > 0 && newPassword.length < 30 &&
+            repeatNewpwd.length > 0 && repeatNewpwd.length < 30 &&
             newPassword == repeatNewpwd
         ) {
             $.ajax({
@@ -90,18 +90,25 @@
                 success: function (result) {
                     console.log(result);
                     if (result.code == "0"){
-
+                        showResultDiv(true);
+                        window.setTimeout("showResultDiv(true);", 3000);
+                    } else if (result.code == "-1"){
+                        $("#passwordError").text(result.message.passwordError);
+                        $("#newPasswordError").text(result.message.newPasswordError);
+                    } else if (result.code == "-2"){
+                        alert(result.message);
+                        window.setTimeout("backLogin();",3000);
                     }
                 }
             });
         } else {
-            if (password == '' || password.length < 0 || password.length > 30){
+            if (password == '' || password.length <= 0 || password.length >= 30){
                 $("#passwordError").text("30长度以内的字母、数字和下划线的组合");
             }
-            if (newPassword == '' || newPassword.length < 0 || newPassword.length > 30){
+            if (newPassword == '' || newPassword.length <= 0 || newPassword.length >= 30){
                 $("#newPasswordError").text("30长度以内的字母、数字和下划线的组合");
             }
-            if (repeatNewpwd == '' || repeatNewpwd.length < 0 || repeatNewpwd.length > 30){
+            if (repeatNewpwd == '' || repeatNewpwd.length <= 0 || repeatNewpwd.length >= 30){
                 $("#repeatNewPwdError").text("30长度以内的字母、数字和下划线的组合");
             }else {
                 if (newPassword != repeatNewpwd){
@@ -111,5 +118,16 @@
         }
     }
 
+    function backLogin() {
+        window.location.href = '/loginPage';
+    }
+
+    function showResultDiv(flag) {
+        var divResult = document.getElementById("save_result_info");
+        if (flag)
+            divResult.style.display = "block";
+        else
+            divResult.style.display = "none";
+    }
 </script>
 </html>

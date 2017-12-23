@@ -7,6 +7,7 @@
     <link type="text/css" rel="stylesheet" media="all" href="../styles/global.css"/>
     <link type="text/css" rel="stylesheet" media="all" href="../styles/global_color.css"/>
     <script src="../../../js/jquery-3.2.1.js"></script>
+    <script src="../../../js/js-list-pagehelper.js"></script>
 </head>
 <body>
 <!--Logo区域开始-->
@@ -51,19 +52,19 @@
         <div class="input_info">
             <input id="adminame" type="text" value=""/>
             <span class="required">*</span>
-            <div id="adminNameError" class="validate_msg_long error_msg">20长度以内的汉字、字母的组合</div>
+            <div id="adminNameError" class="validate_msg_long error_msg"></div>
         </div>
 
         <div class="text_info clearfix"><span>电话：</span></div>
         <div class="input_info">
             <input id="telephone" type="text" class="width200" value=""/>
-            <div id="telephoneError" class="validate_msg_medium">电话号码格式：手机或固话</div>
+            <div id="telephoneError" class="validate_msg_medium"></div>
         </div>
 
         <div class="text_info clearfix"><span>Email：</span></div>
         <div class="input_info">
-            <input id="email" type="text" class="width200" value="aa@aa.com"/>
-            <div id="emailError" class="validate_msg_medium">50长度以内，符合 email 格式</div>
+            <input id="email" type="text" class="width200" value=""/>
+            <div id="emailError" class="validate_msg_medium"></div>
         </div>
         <div class="text_info clearfix"><span>创建时间：</span></div>
         <div class="input_info">
@@ -83,6 +84,29 @@
 </body>
 <script language="javascript" type="text/javascript">
 
+    $.ajax({
+        url: "/findAdminBySession",
+        success: function (result) {
+            console.log(result);
+            if (result.code == "0") {
+                var admin = result.data[0];
+                $("#admincode").val(admin.adminCode);
+
+                var rolenames = admin.roleList[0].name;
+                for (var i=1 ; i<admin.roleList.length ; i++){
+                    rolenames += "," + admin.roleList[i].name;
+                }
+
+                $("#rolenames").val(rolenames);
+                $("#adminame").val(admin.name);
+                $("#telephone").val(admin.telephone);
+                $("#email").val(admin.email);
+                $("#createTime").val(slewTime(admin.enrolldate));
+            }
+        }
+    });
+
+
     function editAdminInfo() {
         var name = $("#adminame").val();
         var telephone = $("#telephone").val();
@@ -92,7 +116,9 @@
         $("#telephoneError").empty();
         $("#emailError").empty();
 
-        if (name != '') {
+        console.log(name+"*"+telephone+"*"+email);
+
+        if (name.length > 0 && name.length < 21) {
             $.ajax({
                 url: "/editAdminInfo",
                 data: {"name": name, "telephone": telephone, "email": email},
@@ -101,15 +127,16 @@
                     if (result.code == "0") {
                         showResultDiv(true);
                         window.setTimeout("showResultDiv(false);", 3000);
-                    } else if (result.code == "-1"){
-                        $("#adminNameError").text();
-                        $("#telephoneError").text();
-                        $("#emailError").text();
+                    } else if (result.code == "-1") {
+                        var adminError = result.message;
+                        $("#adminNameError").text(adminError.nameError);
+                        $("#telephoneError").text(adminError.telephoneError);
+                        $("#emailError").text(adminError.emailError);
                     }
                 }
             });
         } else {
-            if (name=='') {
+            if (name.length <= 0 || name.length >= 21) {
                 $("#adminNameError").text("20长度以内的汉字、字母的组合");
             }
         }

@@ -1,14 +1,11 @@
 package com.ssm.module.mapper;
 
 import com.ssm.module.bean.Module;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
 public interface ModuleMapper {
-
-    int insert(Module record);
-
-    int insertSelective(Module record);
 
     List<Module> findAllModules();
 
@@ -17,4 +14,5 @@ public interface ModuleMapper {
     List<Module> findModulesByRoleIdAndModuleId(int roleId, int moduleId);
 
     List<Module> findModulesByModuleId(int moduleId);
-}
+
+    }
