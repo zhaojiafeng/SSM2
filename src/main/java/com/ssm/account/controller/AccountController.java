@@ -1,8 +1,11 @@
 package com.ssm.account.controller;
 
+import com.ssm.account.bean.Account;
 import com.ssm.account.service.AccountService;
+import com.ssm.util.AjaxResult;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
 
@@ -39,5 +42,10 @@ public class AccountController {
     }
 
 
+    @ResponseBody
+    @RequestMapping("/advanceSearchAccount")
+    public AjaxResult advanceSearchAccount(Account account) {
+        return null;
+    }
 
 }

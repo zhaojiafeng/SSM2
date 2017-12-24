@@ -29,7 +29,7 @@ public interface AdminMapper {
 
     List<Admin> findAdminByAdminCode(String adminCode);
 
-    List<Admin> findAdminIdByRolenameModuleId(@Param("rolename") String rolename, @Param("moduleId") Integer moduleId);
+    List<Admin> findAdminIdByRoleIdModuleId(@Param("list") List list, @Param("moduleId") Integer moduleId);
 
     int findad_rByAdminIdRoleId(int adminId, int roleId);
 }

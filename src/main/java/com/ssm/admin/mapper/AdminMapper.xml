@@ -176,14 +176,16 @@
     </select>
 
 
-    <select id="findAdminIdByRolenameModuleId" resultMap="BaseResultMap">
-        SELECT admin_id
-        FROM admin_role ar
-        LEFT JOIN role_info r ON ar.role_id=r.role_id
+    <select id="findAdminIdByRoleIdModuleId" resultMap="BaseResultMap">
+        SELECT a.admin_id
+        FROM admin_info a
+        LEFT JOIN admin_role ar ON a.admin_id = ar.admin_id
         LEFT JOIN role_module rm ON ar.role_id = rm.role_id
         <where>
-            <if test=" rolename!=null and rolename!='' ">
-                AND r.name LIKE '%${rolename}%'
+            <if test=" list!=null and list.size>0 ">
+                <foreach collection="list" index="index" item="roleId" open=" ar.role_id IN (" close=")" separator=",">
+                    #{roleId}
+                </foreach>
             </if>
             <if test=" moduleId!='0' ">
                 AND rm.module_id=#{moduleId}

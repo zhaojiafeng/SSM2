@@ -20,6 +20,8 @@ public interface RoleMapper {
 
     List<Role> findAllRoles();
 
+    List<Role> findFuzzyRolesByRolename(String rolename);
+
     List<Role> findRoleBySelected(Role role);
 
     List<Role> findRolesByAdminId(int adminId);

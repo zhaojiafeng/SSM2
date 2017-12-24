@@ -174,7 +174,12 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public AjaxResult advanceSearchAdmin(Integer moduleId, String rolename, Integer pageNum, Integer pageSize) {
-        List<Admin> temp = adminMapper.findAdminIdByRolenameModuleId(rolename, moduleId);
+        List<Role> roles = roleMapper.findFuzzyRolesByRolename(rolename);
+        List roleIdlist = new ArrayList();
+        for (Role role : roles) {
+            roleIdlist.add(role.getRoleId());
+        }
+        List<Admin> temp = adminMapper.findAdminIdByRoleIdModuleId(roleIdlist, moduleId);
         List list = new ArrayList();
         for (Admin admin: temp) {
             list.add(admin.getAdminId());

@@ -36,20 +36,19 @@
     <form action="" method="">
         <!--查询-->
         <div class="search_add">
-            <div>身份证：<input type="text" value="不验证" class="text_search"/></div>
-            <div>姓名：<input type="text" class="width70 text_search" value="不验证"/></div>
-            <div>登录名：<input type="text" value="不验证" class="text_search"" /></div>
+            <div>身份证：<input id="idcardNo" type="text" value="" class="text_search"/></div>
+            <div>姓名：  <input id="realName" type="text" class="width70 text_search" value=""/></div>
+            <div>登录名：<input id="loginName" type="text" value="" class="text_search" /></div>
             <div>
                 状态：
-                <select class="select_search">
-                    <option>全部</option>
-                    <option>开通</option>
-                    <option>暂停</option>
-                    <option>删除</option>
+                <select id="accountstatus" class="select_search">
+                    <option value="a">全部</option>
+                    <option value="s">开通</option>
+                    <option value="b">暂停</option>
                 </select>
             </div>
-            <div><input type="button" value="搜索" class="btn_search"/></div>
-            <input type="button" value="增加" class="btn_add" onclick="location.href='account_add.html';"/>
+            <div><input type="button" value="搜索" class="btn_search" onclick="AdvanceSearchAccount()"/></div>
+            <input type="button" value="增加" class="btn_add" onclick="Toaccount_add();"/>
         </div>
         <!--删除等的操作提示-->
         <div id="operate_result_info" class="operate_success">
@@ -99,47 +98,6 @@
                         <input type="button" value="删除" class="btn_delete" onclick="deleteAccount();"/>
                     </td>
                 </tr>
-                <tr>
-                    <td>3</td>
-                    <td><a href="account_detail.html">贾强</a></td>
-                    <td>230102197902137862</td>
-                    <td>jiaqiang</td>
-                    <td>删除</td>
-                    <td>2013-01-23</td>
-                    <td>2013-02-23 00:00:00</td>
-                    <td class="td_modi">
-                    </td>
-                </tr>
-                <tr>
-                    <td>4</td>
-                    <td><a href="account_detail.html">贾强</a></td>
-                    <td>230102197902137862</td>
-                    <td>jiaqiang</td>
-                    <td>开通</td>
-                    <td>2013-01-23</td>
-                    <td>2013-02-23 00:00:00</td>
-                    <td class="td_modi">
-                        <input type="button" value="暂停" class="btn_pause" onclick="setState();"/>
-                        <input type="button" value="修改" class="btn_modify"
-                               onclick="location.href='account_modi.html';"/>
-                        <input type="button" value="删除" class="btn_delete" onclick="deleteAccount();"/>
-                    </td>
-                </tr>
-                <tr>
-                    <td>5</td>
-                    <td><a href="account_detail.html">贾强</a></td>
-                    <td>230102197902137862</td>
-                    <td>jiaqiang</td>
-                    <td>暂停</td>
-                    <td>2013-01-23</td>
-                    <td>2013-02-23 00:00:00</td>
-                    <td class="td_modi">
-                        <input type="button" value="开通" class="btn_start" onclick="setState();"/>
-                        <input type="button" value="修改" class="btn_modify"
-                               onclick="location.href='account_modi.html';"/>
-                        <input type="button" value="删除" class="btn_delete" onclick="deleteAccount();"/>
-                    </td>
-                </tr>
             </table>
             <p>业务说明：<br/>
                 1、创建则开通，记载创建时间；<br/>
@@ -171,15 +129,62 @@
 </div>
 </body>
 <script language="javascript" type="text/javascript">
+
+    $.ajax({
+        url:"",
+        data:{},
+        success:function (result) {
+            console.log(result);
+            showAccountResult();
+        }
+    });
+    
+
+    
+    function AdvanceSearchAccount() {
+        var idcardNo = $("#idcardNo").val();
+        var realName = $("#realName").val();
+        var loginName = $("#loginName").val();
+        var status = $("#accountstatus").val();
+
+        $.ajax({
+            url:"",
+            data:{"idcardNo":idcardNo,"realName":realName,"loginName":loginName,"status":status},
+            success:function (result) {
+                console.log(result);
+                showAccountResult();
+            }
+        });
+    }
+
+    //开通或暂停
+    function setState() {
+        var r = window.confirm("确定要开通此账务账号吗？");
+        document.getElementById("operate_result_info").style.display = "block";
+    }
     //删除
     function deleteAccount() {
         var r = window.confirm("确定要删除此账务账号吗？\r\n删除后将不能恢复，且会删除其下属的所有业务账号。");
         document.getElementById("operate_result_info").style.display = "block";
     }
-    //开通或暂停
-    function setState() {
-        var r = window.confirm("确定要开通此账务账号吗？");
-        document.getElementById("operate_result_info").style.display = "block";
+
+    /**
+     * 显示account的result
+     */
+    function showAccountResult() {
+        
+    }
+
+    function Toaccount_add() {
+        window.location.href = '/account_add';
+    }
+
+    function Toaccount_modi(accountId) {
+        window.location.href = '/account_modi?accountId='+accountId;
+    }
+
+    function Toaccount_detail(accountId) {
+        window.location.href = '/account_detail?accountId='+accountId;
     }
 </script>
 </html>

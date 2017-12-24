@@ -70,6 +70,17 @@
     </select>
 
 
+    <select id="findFuzzyRolesByRolename" parameterType="String" resultMap="BaseResultMap">
+        SELECT role_id
+        FROM role_info
+        <where>
+            <if test=" _parameter!=null and _parameter!='' ">
+                AND name LIKE '%${_parameter}%'
+            </if>
+        </where>
+    </select>
+
+
     <select id="findRoleBySelected" resultMap="BaseResultMap">
         SELECT * FROM role_info
         <where>
