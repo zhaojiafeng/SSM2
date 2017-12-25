@@ -7,7 +7,7 @@
     <link type="text/css" rel="stylesheet" media="all" href="../styles/global.css"/>
     <link type="text/css" rel="stylesheet" media="all" href="../styles/global_color.css"/>
     <script src="../../../js/jquery-3.2.1.js"></script>
-    <script src="../../../js/js-list-pagehelper.js"></script>
+    <script src="../../../js/publicFunction.js"></script>
 </head>
 <body>
 <!--Logo区域开始-->
@@ -96,7 +96,7 @@
         url: "/findAllModules",
         success: function (result) {
             if (result.code == "0") {
-                $("<option value='0'>全部</option>").appendTo("#selModules");
+                $("<option value=''>全部</option>").appendTo("#selModules");
                 for (var i = 0; i < result.data.length; i++) {
                     var module = result.data[i];
                     $("<option value='" + module.moduleId + "'>" + module.name + "</option>").appendTo("#selModules");

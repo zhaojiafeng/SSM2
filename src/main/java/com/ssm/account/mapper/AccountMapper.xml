@@ -25,27 +25,8 @@
         <result column="last_login_ip" jdbcType="VARCHAR" property="lastLoginIp"/>
     </resultMap>
 
-    <insert id="insert" parameterType="com.ssm.account.bean.Account">
-        INSERT INTO account (account_id, recommender_id, login_name,
-                             login_passwd, status, create_date,
-                             pause_date, close_date, real_name,
-                             idcard_no, birthdate, gender,
-                             occupation, telephone, email,
-                             mailaddress, zipcode, qq,
-                             last_login_time, last_login_ip)
-        VALUES (#{accountId,jdbcType=INTEGER}, #{recommenderId,jdbcType=INTEGER}, #{loginName,jdbcType=VARCHAR},
-                                               #{loginPasswd,jdbcType=VARCHAR}, #{status,jdbcType=CHAR},
-                                               #{createDate,jdbcType=TIMESTAMP},
-                                               #{pauseDate,jdbcType=TIMESTAMP}, #{closeDate,jdbcType=TIMESTAMP},
-                                               #{realName,jdbcType=VARCHAR},
-                                               #{idcardNo,jdbcType=CHAR}, #{birthdate,jdbcType=TIMESTAMP},
-                #{gender,jdbcType=CHAR},
-                #{occupation,jdbcType=VARCHAR}, #{telephone,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR},
-                #{mailaddress,jdbcType=VARCHAR}, #{zipcode,jdbcType=CHAR}, #{qq,jdbcType=VARCHAR},
-                #{lastLoginTime,jdbcType=TIMESTAMP}, #{lastLoginIp,jdbcType=VARCHAR})
-    </insert>
 
-    <insert id="insertSelective" parameterType="com.ssm.account.bean.Account">
+    <insert id="addAccount" parameterType="com.ssm.account.bean.Account">
         insert into account
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="accountId != null">
@@ -172,6 +153,71 @@
             </if>
         </trim>
     </insert>
+
+
+    <update id="editAccount">
+        UPDATE account
+        <if test=" realName!=null and realName!='' ">
+            realName = #{realName},
+        </if>
+        <if test=" telephone!=null and telephone!='' ">
+            telephone = #{telephone},
+        </if>
+        <if test=" realName!=null and realName!='' ">
+            realName = #{realName},
+        </if>
+        <if test=" recommenderId!=null and recommenderId!='' ">
+            recommenderId = #{recommenderId},
+        </if>
+        <if test=" email!=null and email!='' ">
+            email = #{email},
+        </if>
+        <if test=" occupation!=null and occupation!='' ">
+            occupation = #{occupation},
+        </if>
+        <if test=" gender!=null and gender!='' ">
+            gender = #{gender},
+        </if>
+        <if test=" mailaddress!=null and mailaddress!='' ">
+            mailaddress = #{mailaddress},
+        </if>
+        <if test=" zipcode!=null and zipcode!='' ">
+            zipcode = #{zipcode},
+        </if>
+        <if test=" qq!=null and qq!='' ">
+            qq = #{qq},
+        </if>
+        WHERE account_id=#{accountId}
+    </update>
+
+
+    <delete id="deleteAccount">
+        DELETE FROM account
+        WHERE account_id = #{accountId}
+    </delete>
+
+
+    <select id="advanceSearchAccount" resultMap="BaseResultMap">
+        SELECT *
+        FROM account
+        <where>
+            <if test=" accountId!=null and accountId!='' ">
+               AND account_id = #{accountId}
+            </if>
+            <if test=" loginName!=null and loginName!='' ">
+                AND login_name like '%${loginName}%'
+            </if>
+            <if test=" status!=null and status!='' ">
+                AND status = #{status}
+            </if>
+            <if test=" realName!=null and realName!='' ">
+                AND real_name like '%${realName}%'
+            </if>
+            <if test=" idcardNo!=null and idcardNo!='' ">
+                AND idcard_no like '%${idcardNo}%'
+            </if>
+        </where>
+    </select>
 
 
 </mapper>

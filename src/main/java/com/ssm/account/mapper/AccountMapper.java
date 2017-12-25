@@ -2,8 +2,17 @@ package com.ssm.account.mapper;
 
 import com.ssm.account.bean.Account;
 
-public interface AccountMapper {
-    int insert(Account record);
+import java.util.List;
 
-    int insertSelective(Account record);
+public interface AccountMapper {
+
+    int addAccount(Account account);
+
+    int deleteAccount(int accountId);
+
+    int editAccount(Account account);
+
+    List<Account> advanceSearchAccount(Account account);
+
+
 }

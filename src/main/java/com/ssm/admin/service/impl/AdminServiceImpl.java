@@ -187,6 +187,7 @@ public class AdminServiceImpl implements AdminService {
         List adminIdList = new ArrayList(new HashSet(list));
         PageHelper.startPage(pageNum, pageSize);
         List<Admin> adminList = adminMapper.findAdminsInAdminIds(adminIdList);
+
         for (Admin admin : adminList) {
             List<Role> roleList = roleMapper.findRolesByAdminId(admin.getAdminId());
             admin.setRoleList(roleList);

@@ -42,10 +42,85 @@ public class AccountController {
     }
 
 
+    /**
+     * 增加account
+     * @param account 增加的account信息
+     * @return 返回code
+     */
+    @ResponseBody
+    @RequestMapping("/addAccount")
+    public AjaxResult addAccount(Account account) {
+        return accountService.addAccount(account);
+    }
+
+
+    /**
+     * 删除account
+     * @param accountId 根据accouId删除数据
+     * @return 返回code
+     */
+    @ResponseBody
+    @RequestMapping("/deleteAccount")
+    public AjaxResult deleteAccount(int accountId) {
+        return accountService.deleteAccount(accountId);
+    }
+
+
+    /**
+     * 编辑account
+     * @param account 编辑后的account
+     * @return 返回code
+     */
+    @ResponseBody
+    @RequestMapping("/editAccount")
+    public AjaxResult editAccount(Account account) {
+        return accountService.editAccount(account);
+    }
+
+
+    @ResponseBody
+    @RequestMapping("/alterAccountStatus")
+    public AjaxResult alterAccountStatus(Account account) {
+        return accountService.alterAccountStatus(account);
+    }
+
+
+    /**
+     * 发现所有的account
+     * @param currentPage 当前页
+     * @param pageSize 每页数量
+     * @return account的ajax数据
+     */
+    @ResponseBody
+    @RequestMapping("/findAllAccount")
+    public AjaxResult findAllAccount(Integer currentPage, Integer pageSize) {
+        return accountService.advanceSearchAccount(null,currentPage,pageSize);
+    }
+
+
+    /**
+     * 根据id查询account
+     * @param account 只有accountId
+     * @return account的ajax数据
+     */
+    @ResponseBody
+    @RequestMapping("/findAccountByAccountId")
+    public AjaxResult findAccountByAccountId(Account account) {
+        return accountService.advanceSearchAccount(account,null,null);
+    }
+
+
+    /**
+     * 高级搜索account
+     * @param account 搜索条件
+     * @param currentPage 当前页
+     * @param pageSize 每页数据数量
+     * @return account的ajax
+     */
     @ResponseBody
     @RequestMapping("/advanceSearchAccount")
-    public AjaxResult advanceSearchAccount(Account account) {
-        return null;
+    public AjaxResult advanceSearchAccount(Account account, Integer currentPage, Integer pageSize) {
+        return accountService.advanceSearchAccount(account,currentPage,pageSize);
     }
 
 }

@@ -187,7 +187,7 @@
                     #{roleId}
                 </foreach>
             </if>
-            <if test=" moduleId!='0' ">
+            <if test=" moduleId!='' and moduleId!=null ">
                 AND rm.module_id=#{moduleId}
             </if>
         </where>
