@@ -9,4 +9,6 @@ public interface ModuleService {
 
     AjaxResult findAllModules();
 
+    AjaxResult findModulesByAdminId(int adminId);
+
 }

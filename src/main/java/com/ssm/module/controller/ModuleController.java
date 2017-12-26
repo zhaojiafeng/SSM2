@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpSession;
 
 /**
  * Created by dllo on 17/12/20.
@@ -22,5 +23,14 @@ public class ModuleController {
     public AjaxResult findAllModules() {
         return moduleService.findAllModules();
     }
+
+
+    @ResponseBody
+    @RequestMapping("/findModulesByAdminId")
+    public AjaxResult findModulesByAdminId(HttpSession session) {
+        return moduleService.findModulesByAdminId((int) session.getAttribute("adminId"));
+    }
+
+
 
 }

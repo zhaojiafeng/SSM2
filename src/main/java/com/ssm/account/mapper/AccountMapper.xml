@@ -157,36 +157,38 @@
 
     <update id="editAccount">
         UPDATE account
-        <if test=" realName!=null and realName!='' ">
-            realName = #{realName},
-        </if>
-        <if test=" telephone!=null and telephone!='' ">
-            telephone = #{telephone},
-        </if>
-        <if test=" realName!=null and realName!='' ">
-            realName = #{realName},
-        </if>
-        <if test=" recommenderId!=null and recommenderId!='' ">
-            recommenderId = #{recommenderId},
-        </if>
-        <if test=" email!=null and email!='' ">
-            email = #{email},
-        </if>
-        <if test=" occupation!=null and occupation!='' ">
-            occupation = #{occupation},
-        </if>
-        <if test=" gender!=null and gender!='' ">
-            gender = #{gender},
-        </if>
-        <if test=" mailaddress!=null and mailaddress!='' ">
-            mailaddress = #{mailaddress},
-        </if>
-        <if test=" zipcode!=null and zipcode!='' ">
-            zipcode = #{zipcode},
-        </if>
-        <if test=" qq!=null and qq!='' ">
-            qq = #{qq},
-        </if>
+        <set>
+            <if test=" realName!=null and realName!='' ">
+                real_name = #{realName},
+            </if>
+            <if test=" telephone!=null and telephone!='' ">
+                telephone = #{telephone},
+            </if>
+            <if test=" recommenderId!=null and recommenderId!='' ">
+                recommender_id = #{recommenderId},
+            </if>
+            <if test=" email!=null and email!='' ">
+                email = #{email},
+            </if>
+            <if test=" status!=null and status!='' ">
+                status = #{status}
+            </if>
+            <if test=" occupation!=null and occupation!='' ">
+                occupation = #{occupation},
+            </if>
+            <if test=" gender!=null and gender!='' ">
+                gender = #{gender},
+            </if>
+            <if test=" mailaddress!=null and mailaddress!='' ">
+                mailaddress = #{mailaddress},
+            </if>
+            <if test=" zipcode!=null and zipcode!='' ">
+                zipcode = #{zipcode},
+            </if>
+            <if test=" qq!=null and qq!='' ">
+                qq = #{qq},
+            </if>
+        </set>
         WHERE account_id=#{accountId}
     </update>
 
@@ -201,8 +203,11 @@
         SELECT *
         FROM account
         <where>
-            <if test=" accountId!=null and accountId!='' ">
-               AND account_id = #{accountId}
+            <if test=" accountId!=null ">
+                account_id = #{accountId}
+            </if>
+            <if test=" recommenderId!=null ">
+                recommenderId = #{recommenderId}
             </if>
             <if test=" loginName!=null and loginName!='' ">
                 AND login_name like '%${loginName}%'

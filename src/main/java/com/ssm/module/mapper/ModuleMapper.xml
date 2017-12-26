@@ -14,10 +14,20 @@
     </select>
 
 
+    <select id="findModulesByAdminId" resultMap="BaseResultMap">
+        SELECT *
+        FROM module_info m
+            LEFT JOIN role_module rm ON m.module_id = rm.module_id
+            LEFT JOIN admin_role ar ON ar.role_id = rm.role_id
+        WHERE ar.admin_id = #{adminId}
+    </select>
+
+
     <select id="findModulesByRoleId" resultMap="BaseResultMap">
         SELECT *
-        FROM module_info m LEFT JOIN role_module rm ON m.module_id = rm.module_id
-        WHERE rm.role_id = #{roleId,jdbcType=INTEGER}
+        FROM module_info m
+            LEFT JOIN role_module rm ON m.module_id = rm.module_id
+        WHERE rm.role_id = #{roleId}
     </select>
 
 
@@ -30,11 +40,10 @@
 
     <select id="findModulesByRoleIdAndModuleId" resultMap="BaseResultMap">
         SELECT m.*
-        FROM module_info m LEFT JOIN role_module rm ON m.module_id = rm.module_id
+        FROM module_info m
+            LEFT JOIN role_module rm ON m.module_id = rm.module_id
         WHERE rm.role_id = #{arg0} AND m.module_id = #{arg1}
     </select>
-
-
 
 
 </mapper>

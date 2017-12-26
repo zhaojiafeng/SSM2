@@ -7,28 +7,18 @@
     <link type="text/css" rel="stylesheet" media="all" href="../styles/global.css"/>
     <link type="text/css" rel="stylesheet" media="all" href="../styles/global_color.css"/>
     <script src="../../../js/jquery-3.2.1.js"></script>
-    <script src="../../../js/publicFunction.js"></script>
+    <script src="../../../js/PublicFunction.js"></script>
 </head>
 <body>
 <!--Logo区域开始-->
 <div id="header">
     <img src="../images/logo.png" alt="logo" class="left"/>
-    <a href="#">[退出]</a>
+    <a href="#" onclick="signOut()">[退出]</a>
 </div>
 <!--Logo区域结束-->
 <!--导航区域开始-->
 <div id="navi">
     <ul id="menu">
-        <li><a href="/index" class="index_off"></a></li>
-        <li><a href="/role_list" class="role_off"></a></li>
-        <li><a href="/admin_list" class="admin_off"></a></li>
-        <li><a href="/fee_list" class="fee_on"></a></li>
-        <li><a href="/account_list" class="account_off"></a></li>
-        <li><a href="/service_list" class="service_off"></a></li>
-        <li><a href="/bill_list" class="bill_off"></a></li>
-        <li><a href="/report_list" class="report_off"></a></li>
-        <li><a href="/user_info" class="information_off"></a></li>
-        <li><a href="/user_modi_pwd" class="password_off"></a></li>
     </ul>
 </div>
 <!--导航区域结束-->
@@ -108,6 +98,9 @@
 </div>
 </body>
 <script>
+
+    window.onload = findModulesByAdminId();
+
     var costId = window.location.search.substr(1).toLowerCase().split("=")[1];
     console.log(costId);
     $.ajax({

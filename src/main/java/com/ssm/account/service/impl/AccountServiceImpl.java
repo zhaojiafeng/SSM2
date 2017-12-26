@@ -9,6 +9,7 @@ import com.ssm.account.service.AccountService;
 import com.ssm.util.AjaxResult;
 import com.ssm.util.EasyMethod;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.util.Date;
@@ -30,6 +31,7 @@ public class AccountServiceImpl implements AccountService {
         if (accountError.getNoError()) {
             account.setCreateDate(new Date());
             account.setBirthdate(new Date());
+            account.setStatus("b");
             accountMapper.addAccount(account);
             return new AjaxResult(null);
         }
@@ -53,6 +55,7 @@ public class AccountServiceImpl implements AccountService {
         }
         return new AjaxResult("-1", accountError);
     }
+
 
     @Override
     public AjaxResult alterAccountStatus(Account account) {
@@ -84,6 +87,21 @@ public class AccountServiceImpl implements AccountService {
         return new AjaxResult(accountPageInfo);
     }
 
+    private Account reviseAccount(Account account) {
+        if (StringUtils.isEmpty(account.getRealName())) {
+            account.setRealName(null);
+        }
+        if (StringUtils.isEmpty(account.getIdcardNo())) {
+            account.setIdcardNo(null);
+        }
+        if (StringUtils.isEmpty(account.getLoginName())) {
+            account.setLoginName(null);
+        }
+        if (StringUtils.isEmpty(account.getStatus())) {
+            account.setStatus(null);
+        }
+        return account;
+    }
 
     private AccountError ValidateAccountError(Account account) {
         AccountError accountError = new AccountError();
@@ -94,47 +112,71 @@ public class AccountServiceImpl implements AccountService {
         String loginName = account.getLoginName();
         String loginPasswd = account.getLoginPasswd();
         String telephone = account.getTelephone();
-        int recommenderId = account.getRecommenderId();
+        int recommenderId;
         String email = account.getEmail();
         String mailaddress = account.getMailaddress();
         String zipcode = account.getZipcode();
         String qq = account.getQq();
 
-        if (realName.equals("") || realName.length() > 20 || !EasyMethod.ValidateString(realName)) {
+        if (StringUtils.isEmpty(realName) || realName.length() > 20 || !EasyMethod.ValidateString(realName)) {
             accountError.setRealNameError("20长度以内的汉字、字母和数字的组合");
             accountError.setNoError(false);
         }
-        if (idcardNo.equals("")) {
-
+//        if (idcardNo.equals("") || !EasyMethod.ValidateIdCard(idcardNo)) {
+//            accountError.setIdcardNoError("正确的身份证号码格式");
+//            accountError.setNoError(false);
+//        }
+        if (!StringUtils.isEmpty(loginName)) {
+            if (loginName.length() > 30 || !EasyMethod.ValidateString(loginName)) {
+                accountError.setLoginNameError("30长度以内的字母、数字和下划线的组合");
+                accountError.setNoError(false);
+            }
         }
-        if (loginName.equals("") || loginName.length() > 30 || !EasyMethod.ValidateString(loginName)) {
-            accountError.setLoginNameError("30长度以内的字母、数字和下划线的组合");
-            accountError.setNoError(false);
+        if (!StringUtils.isEmpty(loginPasswd)) {
+            if (loginPasswd.length() > 30 || !EasyMethod.ValidateString(loginPasswd)) {
+                accountError.setLoginPasswdError("30长度以内的字母、数字和下划线的组合");
+                accountError.setNoError(false);
+            }
         }
-        if (loginPasswd.equals("") || loginPasswd.length() > 30 || !EasyMethod.ValidateString(loginPasswd)) {
-            accountError.setLoginPasswdError("30长度以内的字母、数字和下划线的组合");
-            accountError.setNoError(false);
+        if (telephone != null || !StringUtils.isEmpty(telephone)) {
+            if (!EasyMethod.ValidateTel(telephone)) {
+                accountError.setTelephoneError("正确的电话号码格式：手机或固话");
+                accountError.setNoError(false);
+            }
         }
-        if (!EasyMethod.ValidateTel(telephone)) {
-            accountError.setTelephoneError("正确的电话号码格式：手机或固话");
-            accountError.setNoError(false);
+        if (account.getRecommenderId() != null) {
+            recommenderId = account.getRecommenderId();
+            Account acc = new Account();
+            acc.setRecommenderId(recommenderId);
+            List<Account> accountList = accountMapper.advanceSearchAccount(acc);
+            if (accountList.size() == 0) {
+                accountError.setRecommenderIdError("请确认推荐人账务账号ID");
+                accountError.setNoError(false);
+            }
         }
-        if (!EasyMethod.ValidateEmail(email)) {
-            accountError.setEmailError("50长度以内，合法的 Email 格式");
-            accountError.setNoError(false);
+        if (email != "" && email != null) {
+            if (!EasyMethod.ValidateEmail(email)) {
+                accountError.setEmailError("50长度以内，合法的 Email 格式");
+                accountError.setNoError(false);
+            }
         }
         if (mailaddress.length() > 50) {
             accountError.setMailaddressError("50长度以内");
             accountError.setNoError(false);
         }
-        if (zipcode != null && zipcode.length() != 6) {
-            accountError.setZipcodeError("6位数字");
-            accountError.setNoError(false);
+        if (zipcode != "" && zipcode != null) {
+            if (zipcode.length() != 6) {
+                accountError.setZipcodeError("6位数字");
+                accountError.setNoError(false);
+            }
         }
-        if (qq != null && qq.length() != 6) {
-            accountError.setQqError("5到13位数字");
-            accountError.setNoError(false);
+        if (qq != "" && qq != null) {
+            if (qq.length() < 5 || qq.length() > 13) {
+                accountError.setQqError("5到13位数字");
+                accountError.setNoError(false);
+            }
         }
         return accountError;
     }
+
 }

@@ -42,6 +42,24 @@ function findAccountByAccountId() {
 
 
 /**
+ * add和modi中清空errors
+ */
+function clearErrors() {
+    $("#realNameError").empty();
+    $("#idcardNoError").empty();
+    $("#loginNameError").empty();
+    $("#loginPasswdError").empty();
+    $("#repeatPasswdError").empty();
+    $("#telephoneError").empty();
+    $("#recommenderIdError").empty();
+    $("#emailError").empty();
+    $("#mailaddressError").empty();
+    $("#zipcodeError").empty();
+    $("#qqError").empty();
+}
+
+
+/**
  * add和modi中编辑成功，失败
  * @param flag
  */
@@ -76,23 +94,13 @@ function addAccount() {
     var zipcode = $("#zipcode").val();
     var qq = $("#qq").val();
 
-    $("#realNameError").empty();
-    $("#idcardNoError").empty();
-    $("#loginNameError").empty();
-    $("#loginPasswdError").empty();
-    $("#repeatPasswdError").empty();
-    $("#telephoneError").empty();
-    $("#recommenderIdError").empty();
-    $("#emailError").empty();
-    $("#mailaddressError").empty();
-    $("#zipcodeError").empty();
-    $("#qqError").empty();
+    clearErrors();
 
     if (realName.length > 0 && realName.length < 21 &&
         loginName.length > 0 && loginName.length < 31 &&
         loginPasswd.length > 0 && loginPasswd.length < 31 &&
         repeatPasswd.length > 0 && repeatPasswd.length < 31 &&
-        loginPasswd == repeatPasswd
+        loginPasswd == repeatPasswd && idcardNo.length != 0
     ) {
         $.ajax({
             url: "/addAccount",
@@ -102,6 +110,7 @@ function addAccount() {
                 "occupation": occupation, "mailaddress": mailaddress, "zipcode": zipcode, "qq": qq
             },
             success: function (result) {
+                console.log(result);
                 if (result.code == "0") {
                     showResultDiv(true);
                     window.setTimeout("showResultDiv(true);", 1500);
@@ -125,17 +134,21 @@ function addAccount() {
             }
         });
     } else {
-        if (realName.length <= 0 && realName.length >= 21) {
+        if (realName.length == 0 || realName.length >= 21) {
             $("#realNameError").text("20长度以内的汉字、字母和数字的组合");
         }
-        if (loginName.length <= 0 && loginName.length >= 31) {
+        if (idcardNo.length == 0) {
+            $("#idcardNoError").text("身份证不能为空");
+        }
+        if (loginName.length == 0 || loginName.length >= 31) {
             $("#loginNameError").text("30长度以内的字母、数字和下划线的组合");
         }
-        if (loginPasswd.length <= 0 && loginPasswd.length >= 31) {
+        if (loginPasswd.length == 0 || loginPasswd.length >= 31) {
             $("#loginPasswdError").text("30长度以内的字母、数字和下划线的组合");
         }
-        if (repeatPasswd.length <= 0 && repeatPasswd.length >= 31) {
+        if (repeatPasswd.length == 0 || repeatPasswd.length >= 31) {
             $("#repeatPasswdError").text("30长度以内的字母、数字和下划线的组合");
+        } else {
             if (loginPasswd != repeatPasswd) {
                 $("#repeatPasswdError").text("两次密码必须相同");
             }
@@ -163,6 +176,23 @@ function showOptionalInfo(imgObj) {
 /**
  * account_list中的方法
  */
+
+/**
+ * 第一页的五个account数据
+ */
+function findAllAccounts() {
+    var currentPage = 1;
+    var pageSize = 4;
+    $.ajax({
+        url: "/findAllAccount",
+        data: {"currentPage": currentPage, "pageSize": pageSize},
+        success: function (result) {
+            console.log(result);
+            showAccountResult(result);
+        }
+    });
+}
+
 
 /**
  * 根据页数，条件获取数据
@@ -238,6 +268,7 @@ function alterAccountStatus(accountId) {
             success: function (result) {
                 if (result.code == "0") {
                     document.getElementById("operate_result_info").style.display = "block";
+                    backToAccount_list();
                 }
             }
         })
@@ -257,6 +288,7 @@ function deleteAccount(accountId) {
             success: function (result) {
                 if (result.code == "0") {
                     document.getElementById("operate_result_info").style.display = "block";
+                    window.setTimeout("backToAccount_list();", 1500);
                 }
             }
         })
@@ -402,18 +434,10 @@ function editAccount() {
     var mailaddress = $("#mailaddress").val();
     var zipcode = $("#zipcode").val();
     var qq = $("#qq").val();
-
-    $("#realNameError").empty();
-    $("#telephoneError").empty();
-    $("#recommenderIdError").empty();
-    $("#emailError").empty();
-    $("#mailaddressError").empty();
-    $("#zipcodeError").empty();
-    $("#qqError").empty();
-
-    if (realName.length > 0 && realName.length < 21 && email.length < 51 && mailaddress<51) {
+    clearErrors();
+    if (realName.length > 0 && realName.length < 21) {
         $.ajax({
-            url: "/addAccount",
+            url: "/editAccount",
             data: {
                 "accountId": accountId,
                 "realName": realName,
@@ -426,9 +450,10 @@ function editAccount() {
                 "qq": qq
             },
             success: function (result) {
+                console.log(result);
                 if (result.code == "0") {
                     showResultDiv(true);
-                    window.setTimeout("showResultDiv(true);", 1500);
+                    window.setTimeout("showResultDiv(false);", 1500);
                     window.setTimeout("backToAccount_list();", 1500)
                 } else if (result.code == "-1") {
                     $("#realNameError").text(result.message.realNameError);
@@ -440,31 +465,14 @@ function editAccount() {
                     $("#qqError").text(result.message.qqError);
 
                     showResultDiv(false);
-                    window.setTimeout("showResultDiv(true);", 1500);
+                    window.setTimeout("showResultDiv(false);", 1500);
                 }
             }
         });
     } else {
-        if (realName.length <= 0 || realName.length >= 21) {
+        if (realName.length == 0 || realName.length >= 21) {
             $("#realNameError").text("20长度以内的汉字、字母和数字的组合");
         }
-        if (email.length >= 51) {
-            $("#emailError").text("50长度以内，合法的 Email 格式");
-        }
-        if (mailaddress.length >= 51) {
-            $("#mailaddressError").text("50长度以内");
-        }
     }
-}
-
-
-/**
- * 显示修改密码的信息项
- */
-function showPwd(chkObj) {
-    if (chkObj.checked)
-        document.getElementById("divPwds").style.display = "block";
-    else
-        document.getElementById("divPwds").style.display = "none";
 }
 
