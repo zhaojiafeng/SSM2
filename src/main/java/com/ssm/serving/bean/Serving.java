@@ -1,27 +1,24 @@
 package com.ssm.serving.bean;
 
+import com.ssm.account.bean.Account;
+import com.ssm.cost.bean.Cost;
+
 import java.util.Date;
 
 public class Serving {
+
     private Integer serviceId;
-
     private Integer accountId;
-
     private String unixHost;
-
     private String osUsername;
-
     private String loginPasswd;
-
     private String status;
-
     private Date createDate;
-
     private Date pauseDate;
-
     private Date closeDate;
-
     private Integer costId;
+    private Account account;
+    private Cost cost;
 
     public Integer getServiceId() {
         return serviceId;
@@ -101,5 +98,21 @@ public class Serving {
 
     public void setCostId(Integer costId) {
         this.costId = costId;
+    }
+
+    public Account getAccount() {
+        return account;
+    }
+
+    public void setAccount(Account account) {
+        this.account = account;
+    }
+
+    public Cost getCost() {
+        return cost;
+    }
+
+    public void setCost(Cost cost) {
+        this.cost = cost;
     }
 }

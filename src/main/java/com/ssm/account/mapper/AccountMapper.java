@@ -14,5 +14,4 @@ public interface AccountMapper {
 
     List<Account> advanceSearchAccount(Account account);
 
-
 }

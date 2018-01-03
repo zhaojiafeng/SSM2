@@ -80,12 +80,12 @@ public class AccountServiceImpl implements AccountService {
         if (null == pageNum && null == pageSize) {
             return new AjaxResult(accountMapper.advanceSearchAccount(account));
         }
-
         PageHelper.startPage(pageNum, pageSize);
         List<Account> accountList = accountMapper.advanceSearchAccount(account);
         PageInfo<Account> accountPageInfo = new PageInfo<>(accountList);
         return new AjaxResult(accountPageInfo);
     }
+
 
     private Account reviseAccount(Account account) {
         if (StringUtils.isEmpty(account.getRealName())) {

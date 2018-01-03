@@ -19,8 +19,6 @@ function slewTime(time) {
     var revertime = [year, month, date].join('/') + ' ' + [hour, minute, seconds].join(':');
     return revertime;
 }
-
-
 /**
  * 显示日期
  * @param time
@@ -36,10 +34,6 @@ function slewDate123(time) {
 }
 
 
-/**
- * 权限
- * 退出登录
- */
 /**
  * 退出登录
  */
@@ -76,8 +70,6 @@ function findModulesByAdminId() {
         }
     });
 }
-
-
 /**
  * 显示权限modules
  * @param modules
@@ -148,8 +140,6 @@ function showModules(modules) {
         $("<li><a href='/user_modi_pwd' class='password_off'></a></li>").appendTo($("#menu"));
     }
 }
-
-
 /**
  * 判断str是否包含substr
  * @param str

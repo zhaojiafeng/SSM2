@@ -81,11 +81,6 @@
     </delete>
 
 
-    <update id="resetPwd">
-
-    </update>
-
-
     <update id="editAdminInfo">
         UPDATE admin_info
         <set>

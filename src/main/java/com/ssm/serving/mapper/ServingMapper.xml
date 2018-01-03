@@ -16,19 +16,7 @@
     </resultMap>
 
 
-    <insert id="insert" parameterType="com.ssm.serving.bean.Serving">
-        INSERT INTO service (service_id, account_id, unix_host,
-                             os_username, login_passwd, status,
-                             create_date, pause_date, close_date,
-                             cost_id)
-        VALUES (#{serviceId,jdbcType=INTEGER}, #{accountId,jdbcType=INTEGER}, #{unixHost,jdbcType=VARCHAR},
-                #{osUsername,jdbcType=VARCHAR}, #{loginPasswd,jdbcType=VARCHAR}, #{status,jdbcType=CHAR},
-                #{createDate,jdbcType=TIMESTAMP}, #{pauseDate,jdbcType=TIMESTAMP}, #{closeDate,jdbcType=TIMESTAMP},
-                #{costId,jdbcType=INTEGER})
-    </insert>
-
-
-    <insert id="insertSelective" parameterType="com.ssm.serving.bean.Serving">
+    <insert id="addServing" parameterType="com.ssm.serving.bean.Serving">
         insert into service
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="serviceId != null">
@@ -95,5 +83,53 @@
             </if>
         </trim>
     </insert>
+
+
+    <delete id="deleteServing">
+        DELETE FROM service
+        WHERE service_id = #{servingId}
+    </delete>
+
+
+    <update id="editServing">
+        UPDATE service
+        <set>
+            <if test=" osUsername!=null ">
+                AND os_username=#{osUsername}
+            </if>
+            <if test=" unixHost!=null ">
+                AND unix_host=#{unixHost}
+            </if>
+            <if test=" costId!=null ">
+                AND cost_id=#{costId}
+            </if>
+        </set>
+        WHERE service_id = #{serviceId}
+    </update>
+
+
+    <select id="advanceSearchService" resultMap="BaseResultMap">
+        SELECT *
+        FROM service s
+        LEFT JOIN account a ON s.account_id = a.account_id
+        <where>
+            <if test="serviceId!=null">
+                AND s.service_id=#{serviceId}
+            </if>
+            <if test=" osUsername!=null ">
+                AND s.os_username=#{osUsername}
+            </if>
+            <if test=" unixHost!=null ">
+                AND s.unix_host=#{unixHost}
+            </if>
+            <!--<if test="id">-->
+                <!--AND idcardNo=#{}-->
+            <!--</if>-->
+            <if test=" status!=null ">
+                AND s.status=#{status}
+            </if>
+        </where>
+    </select>
+
 
 </mapper>

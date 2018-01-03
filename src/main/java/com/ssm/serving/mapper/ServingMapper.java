@@ -2,8 +2,16 @@ package com.ssm.serving.mapper;
 
 import com.ssm.serving.bean.Serving;
 
-public interface ServingMapper {
-    int insert(Serving record);
+import java.util.List;
 
-    int insertSelective(Serving record);
+public interface ServingMapper {
+
+    int addServing(Serving serving);
+
+    int deleteServing(int servingId);
+
+    int editServing(Serving serving);
+
+    List<Serving> advanceSearchService(Serving serving);
+
 }

@@ -12,6 +12,8 @@ import java.util.regex.Pattern;
  */
 public class EasyMethod {
 
+
+
     /*
     * 判断是否为整数
     * @param str 传入的字符串
@@ -35,6 +37,7 @@ public class EasyMethod {
         boolean result = matcher.matches();
         return result;
     }
+
 
     /**
      * 判断是否是邮箱
@@ -62,9 +65,10 @@ public class EasyMethod {
     }
 
 
-    public static boolean ValidateIdCard(String idcardNo) {
-        Pattern regex = Pattern.compile("^(\\\\d{6})(19|20)(\\\\d{2})(1[0-2]|0[1-9])(0[1-9]|[1-2][0-9]|3[0-1])(\\\\d{3})(\\\\d|X|x)?$");
-        return regex.matcher(idcardNo).matches();
+    public static boolean IDCardValidator(String idcardNo) {
+        IDcard id = new IDcard();
+        boolean result = id.Verify(idcardNo);
+        return result;
     }
 
 
